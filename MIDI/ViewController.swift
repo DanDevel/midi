@@ -10,6 +10,12 @@ import UIKit
 
 class ViewController: UIViewController {
 
+    @IBOutlet var btnCreateSequence: UIButton!
+    
+    @IBAction func createSequence(sender: AnyObject) {
+        println("It worked")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.

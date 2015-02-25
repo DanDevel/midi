@@ -13,6 +13,8 @@
 		3FCF2B6E1A9E593600B3E309 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3FCF2B6D1A9E593600B3E309 /* Images.xcassets */; };
 		3FCF2B711A9E593600B3E309 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3FCF2B6F1A9E593600B3E309 /* LaunchScreen.xib */; };
 		3FCF2B7D1A9E593600B3E309 /* MIDITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FCF2B7C1A9E593600B3E309 /* MIDITests.swift */; };
+		3FCF2B891A9E6E4B00B3E309 /* MIDISequenceBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FCF2B881A9E6E4B00B3E309 /* MIDISequenceBuilder.swift */; };
+		3FCF2B8B1A9E71B500B3E309 /* MIDISequenceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FCF2B8A1A9E71B500B3E309 /* MIDISequenceManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,6 +38,8 @@
 		3FCF2B761A9E593600B3E309 /* MIDITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MIDITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3FCF2B7B1A9E593600B3E309 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3FCF2B7C1A9E593600B3E309 /* MIDITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MIDITests.swift; sourceTree = "<group>"; };
+		3FCF2B881A9E6E4B00B3E309 /* MIDISequenceBuilder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MIDISequenceBuilder.swift; sourceTree = "<group>"; };
+		3FCF2B8A1A9E71B500B3E309 /* MIDISequenceManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MIDISequenceManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,6 +87,8 @@
 				3FCF2B6D1A9E593600B3E309 /* Images.xcassets */,
 				3FCF2B6F1A9E593600B3E309 /* LaunchScreen.xib */,
 				3FCF2B641A9E593600B3E309 /* Supporting Files */,
+				3FCF2B881A9E6E4B00B3E309 /* MIDISequenceBuilder.swift */,
+				3FCF2B8A1A9E71B500B3E309 /* MIDISequenceManager.swift */,
 			);
 			path = MIDI;
 			sourceTree = "<group>";
@@ -212,7 +218,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				3FCF2B691A9E593600B3E309 /* ViewController.swift in Sources */,
+				3FCF2B8B1A9E71B500B3E309 /* MIDISequenceManager.swift in Sources */,
 				3FCF2B671A9E593600B3E309 /* AppDelegate.swift in Sources */,
+				3FCF2B891A9E6E4B00B3E309 /* MIDISequenceBuilder.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
