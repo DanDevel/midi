@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		3F73E4EC1AA7977B00FE14A6 /* bossanuevewext.mid in Resources */ = {isa = PBXBuildFile; fileRef = 3F73E4EB1AA7977B00FE14A6 /* bossanuevewext.mid */; };
-		3F73E4EE1AA7A08600FE14A6 /* MusicSequenceWrapperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F73E4ED1AA7A08600FE14A6 /* MusicSequenceWrapperTests.swift */; };
 		3F73E4F01AA7A0F600FE14A6 /* MusicSequenceWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FCF2B8C1AA37F4B00B3E309 /* MusicSequenceWrapper.swift */; };
 		3F73E4F21AA7A4FF00FE14A6 /* MusicSequenceTransposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F73E4F11AA7A4FF00FE14A6 /* MusicSequenceTransposer.swift */; };
 		3F73E4F31AA7A4FF00FE14A6 /* MusicSequenceTransposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F73E4F11AA7A4FF00FE14A6 /* MusicSequenceTransposer.swift */; };
@@ -37,7 +36,6 @@
 
 /* Begin PBXFileReference section */
 		3F73E4EB1AA7977B00FE14A6 /* bossanuevewext.mid */ = {isa = PBXFileReference; lastKnownFileType = audio.midi; path = bossanuevewext.mid; sourceTree = "<group>"; };
-		3F73E4ED1AA7A08600FE14A6 /* MusicSequenceWrapperTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MusicSequenceWrapperTests.swift; sourceTree = "<group>"; };
 		3F73E4F11AA7A4FF00FE14A6 /* MusicSequenceTransposer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MusicSequenceTransposer.swift; sourceTree = "<group>"; };
 		3F73E4F41AA7A75500FE14A6 /* MusicEventIteratorWrapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MusicEventIteratorWrapper.swift; sourceTree = "<group>"; };
 		3FCF2B611A9E593600B3E309 /* MIDI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MIDI.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -122,7 +120,6 @@
 			isa = PBXGroup;
 			children = (
 				3FCF2B7C1A9E593600B3E309 /* MIDITests.swift */,
-				3F73E4ED1AA7A08600FE14A6 /* MusicSequenceWrapperTests.swift */,
 				3FCF2B7A1A9E593600B3E309 /* Supporting Files */,
 			);
 			path = MIDITests;
@@ -251,7 +248,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				3F73E4F01AA7A0F600FE14A6 /* MusicSequenceWrapper.swift in Sources */,
-				3F73E4EE1AA7A08600FE14A6 /* MusicSequenceWrapperTests.swift in Sources */,
 				3FCF2B7D1A9E593600B3E309 /* MIDITests.swift in Sources */,
 				3F73E4F31AA7A4FF00FE14A6 /* MusicSequenceTransposer.swift in Sources */,
 				3F73E4F61AA7A75500FE14A6 /* MusicEventIteratorWrapper.swift in Sources */,

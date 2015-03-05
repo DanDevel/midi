@@ -110,6 +110,17 @@ class MusicEventIteratorWrapper {
         return (timeStamp, type, data, dataSize)
     }
     
+    func setIteratorEvent(type: MusicEventType, data: UnsafePointer<()>) -> Bool {
+        var status = MusicEventIteratorSetEventInfo(iterator, type, data)
+        
+        if status != noErr {
+            println("Could not set event info")
+            return false
+        }
+        
+        return true
+    }
+    
     // assumes current event is available
     func getMIDINoteMessage() -> MIDINoteMessage? {
         var event = getIteratorEvent()
