@@ -133,4 +133,14 @@ class MusicEventIteratorWrapper {
         return data.memory
     }
     
+    // TODO make pointer work
+    func setMIDINoteMessage(noteMessage: MIDINoteMessage) -> Bool {
+        var data = UnsafePointer<MIDINoteMessage>()
+        // create a unsafe pointer somehow...
+        
+        let type = MusicEventType(kMusicEventType_MIDINoteMessage)
+        return setIteratorEvent(type, data: data)
+        
+    }
+    
 }
