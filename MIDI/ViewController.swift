@@ -13,7 +13,14 @@ class ViewController: UIViewController {
     @IBOutlet var btnCreateSequence: UIButton!
     
     @IBAction func createSequence(sender: AnyObject) {
-        println("It worked")
+        let fileURL = NSBundle.mainBundle().URLForResource("bossanuevewext", withExtension: "mid")
+        var sequence = MusicSequenceWrapper(url: fileURL)
+        if sequence == nil {
+            println("Sequence Failed To Load")
+            return
+        }
+        println("Starting Transposition")
+        sequence!.transposeAllTracks(2)
     }
     
     override func viewDidLoad() {
