@@ -10,7 +10,7 @@ import AudioToolbox
 
 class MusicSequenceTransposer {
     
-    var sequence: MusicSequenceWrapper
+    var sequence: MusicSequenceWrapper = MusicSequenceWrapper()
     
     init(sequence: MusicSequenceWrapper) {
         setSequence(sequence)
@@ -20,38 +20,11 @@ class MusicSequenceTransposer {
         self.sequence = sequence
     }
     
-    func transposeTrack(track: MusicTrack, dNote: UInt8) -> MusicTrack? {
-        var iterator = MusicEventIteratorWrapper(track: track) // TODO use cloned track. create trackwrapper and implement clone using MusicTrackCopyInsert
-        
-        if iterator == nil {
-            println("Failed to create Iterator")
-            return nil
-        }
-        
-        if iterator!.hasCurrent() {
-            var result = transposeNote(iterator!, dNote: dNote)
-            // continue if error???
-        }
-    }
-    
-    // make param instance variable?
-    func transposeNote(iterator: MusicEventIteratorWrapper, dNote: UInt8) -> Bool {
-        var noteMessage = iterator.getMIDINoteMessage()
-        
-        if noteMessage == nil {
-            println("Could not get Note Message")
-            return false
-        }
-        
-        var newNote = noteMessage!.note + dNote
-        
-        // write note message to iterator (create function in iterator wrapper)
-        
-        return true
+    func getSequence() -> MusicSequenceWrapper {
+        return sequence
     }
     
     func transposeSequence(dNote: UInt8) -> MusicSequenceWrapper? {
-
         let trackCount = sequence.getTrackCount()
         
         if trackCount == nil {
@@ -62,59 +35,64 @@ class MusicSequenceTransposer {
         var eventIterator = MusicEventIterator()
         
         for index in 0...(trackCount! - 1) {
-            // get current track
-            var status = MusicSequenceGetIndTrack(sequence.getSequence(), index, &currTrack)
+            var transposedTrack = transposeTrack(index, dNote: dNote)
             
-            println("Track  \(index)")
-            
-            if status != noErr {
-                println("Error in getting track")
+            if transposedTrack == nil {
+                return nil
             }
-            
-            // create event iterator
-            status = NewMusicEventIterator(currTrack, &eventIterator)
-            
-            if status != noErr {
-                println("Error in creating iterator")
-            }
-            
-            // check if first event exists
-            var hasCurrEvent = Boolean()
-            status = MusicEventIteratorHasCurrentEvent(eventIterator, &hasCurrEvent)
-            
-            // transpose first event
-            var eventTimeStamp = MusicTimeStamp()
-            var eventType = MusicEventType()
-            var eventData: UnsafePointer<()> = nil
-            var eventDataSize = UInt32()
-            
-            // get event information
-            var currMessage = getMIDINoteMessage(eventIterator)
-            println("First Note: \(currMessage!.note)")
-            
-            // while has next event
-            // change to next event
-            // get curr Note value
-            // add dNote to currNote value
-            // set new Note value
-            
-            //            var hasNextEvent = Boolean()
-            //            do {
-            //
-            //                status = MusicEventIteratorHasNextEvent(eventIterator, &hasNextEvent)
-            //            } while(hasNextEvent != 0)
-            
         }
         
-        return sequence
+        return getSequence()
     }
     
-    //    func transposeNote(noteMessage: MIDINoteMessage, dNote: UInt8) -> MIDINoteMessage {
-    //
-    //        //TODO clone noteMessage with new note value
-    //        noteMessage.note = noteMessage.note + dNote
-    //        return noteMessage
-    //    }
-
+    func transposeTrack(index: UInt32, dNote: UInt8) -> MusicTrack? {
+        var track = MusicTrack()
+        var status = MusicSequenceGetIndTrack(sequence.getSequence(), index, &track)
+        
+        if status != noErr {
+            println("Error in getting track")
+            return nil
+        }
+        
+        return transposeTrack(track, dNote: dNote)
+    }
     
+    private func transposeTrack(track: MusicTrack, dNote: UInt8) -> MusicTrack? {
+        var iterator = MusicEventIteratorWrapper(track: track)
+        
+        if iterator == nil {
+            println("Failed to create Iterator")
+            return nil
+        }
+        
+        var hasCurrEvent = iterator!.hasCurrent()
+        while hasCurrEvent {
+            var result = transposeNote(iterator!, dNote: dNote)
+            
+            if !result {
+                return nil
+            }
+            
+            if !iterator!.next() {
+                hasCurrEvent = false
+            }
+        }
+        
+        return track
+    }
+    
+    private func transposeNote(iterator: MusicEventIteratorWrapper, dNote: UInt8) -> Bool {
+        var noteMessage = iterator.getMIDINoteMessage()
+        
+        if noteMessage == nil {
+            println("Could not get Note Message")
+            return false
+        }
+        
+        var newNote = noteMessage!.note + dNote
+        var newNoteMessage = MIDINoteMessage(channel: noteMessage!.channel, note: newNote, velocity: noteMessage!.velocity, releaseVelocity: noteMessage!.releaseVelocity, duration: noteMessage!.duration)
+        
+        return iterator.setMIDINoteMessage(newNoteMessage)
+    }
+
 }
