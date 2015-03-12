@@ -110,8 +110,8 @@ class MusicEventIteratorWrapper {
         return (timeStamp, type, data, dataSize)
     }
     
-    func setIteratorEvent(type: MusicEventType, data: UnsafePointer<()>) -> Bool {
-        var status = MusicEventIteratorSetEventInfo(iterator, type, data)
+    func setIteratorEvent(type: MusicEventType, data: UnsafePointer<Void>) -> Bool {
+        var status = MusicEventIteratorSetEventInfo(iterator, type, data)  //TODO issue with pointer
         
         if status != noErr {
             println("Could not set event info")
@@ -125,7 +125,11 @@ class MusicEventIteratorWrapper {
     func getMIDINoteMessage() -> MIDINoteMessage? {
         var event = getIteratorEvent()
         
-        if event == nil  || event!.type != MusicEventType(kMusicEventType_MIDINoteMessage){
+        if event == nil {
+            println("Failed to get event")
+            return nil
+        } else if event!.type != MusicEventType(kMusicEventType_MIDINoteMessage) {
+            println("Event isn't midi")
             return nil
         }
 
@@ -133,14 +137,14 @@ class MusicEventIteratorWrapper {
         return data.memory
     }
     
+    
+    //*******************************************************************
+    
     // TODO make pointer work
     func setMIDINoteMessage(noteMessage: MIDINoteMessage) -> Bool {
-        var data = UnsafePointer<MIDINoteMessage>()
-        // create a unsafe pointer somehow...
-        
+        var message: MIDINoteMessage = noteMessage
         let type = MusicEventType(kMusicEventType_MIDINoteMessage)
-        return setIteratorEvent(type, data: data)
-        
+        return setIteratorEvent(type, data: &message)
     }
     
 }

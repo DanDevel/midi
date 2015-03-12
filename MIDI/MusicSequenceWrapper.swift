@@ -125,5 +125,36 @@ class MusicSequenceWrapper {
         return trackCount
     }
     
-    // clone track at index i
+    func getTrack(index: UInt32) -> MusicTrack? {
+        var track = MusicTrack()
+        var status = MusicSequenceGetIndTrack(sequence, index, &track)
+        
+        if status != noErr {
+            println("Could not get track at index \(index)")
+            return nil
+        }
+        
+        return track
+    }
+    
+//    func clone() -> MusicSequenceWrapper? {
+//        var clonedSequence = MusicSequenceWrapper()
+//        
+//        let trackCount = getTrackCount()
+//        
+//        if trackCount == nil {
+//            return nil
+//        }
+//        
+//        var currTrack = MusicTrack()
+//        
+//        for index in 0...(trackCount! - 1) {
+//            var currTrack = getTrack(index)
+//            var clonedTrack = clonedSequence.newTrack()
+//            
+//            merge(clonedTrack, currTrack)
+//            
+//        }
+//    }
+    
 }
