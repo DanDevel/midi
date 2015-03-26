@@ -97,9 +97,9 @@
 				3FCF2B6F1A9E593600B3E309 /* LaunchScreen.xib */,
 				3FCF2B641A9E593600B3E309 /* Supporting Files */,
 				3FCF2B8C1AA37F4B00B3E309 /* MusicSequence.swift */,
+				3FB98ABB1AA8F66B00C48F31 /* MusicTrack.swift */,
 				3F73E4F41AA7A75500FE14A6 /* MusicEventIterator.swift */,
 				3F73E4F11AA7A4FF00FE14A6 /* MusicSequenceTransposer.swift */,
-				3FB98ABB1AA8F66B00C48F31 /* MusicTrack.swift */,
 			);
 			path = MIDI;
 			sourceTree = "<group>";

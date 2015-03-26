@@ -84,9 +84,9 @@ func IteratorGetCurrentNoteEvent(iterator: MusicEventIterator) -> MIDINoteMessag
 }
 
 func IteratorSetCurrentNoteEvent(iterator: MusicEventIterator, noteMessage: MIDINoteMessage) -> Bool {
-    let message: MIDINoteMessage = noteMessage
+    var message: MIDINoteMessage = noteMessage
     let type = MusicEventType(kMusicEventType_MIDINoteMessage)
-    return IteratorSetCurrentEvent(iterator, IteratorEvent(type: type, data: &message))
+    return IteratorSetCurrentEvent(iterator, IteratorEvent(timeStamp: -1, type: type, data: &message, dataSize: 0))
 }
 
 private func IteratorGetCurrentEvent(iterator: MusicEventIterator) -> IteratorEvent? {
