@@ -21,6 +21,7 @@
 		3FCF2B711A9E593600B3E309 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3FCF2B6F1A9E593600B3E309 /* LaunchScreen.xib */; };
 		3FCF2B7D1A9E593600B3E309 /* MIDITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FCF2B7C1A9E593600B3E309 /* MIDITests.swift */; };
 		3FCF2B8D1AA37F4B00B3E309 /* MusicSequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FCF2B8C1AA37F4B00B3E309 /* MusicSequence.swift */; };
+		3FE7645B1AC3E20C001E942F /* MusicTrack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FB98ABB1AA8F66B00C48F31 /* MusicTrack.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -243,6 +244,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3FE7645B1AC3E20C001E942F /* MusicTrack.swift in Sources */,
 				3F73E4F01AA7A0F600FE14A6 /* MusicSequence.swift in Sources */,
 				3FCF2B7D1A9E593600B3E309 /* MIDITests.swift in Sources */,
 				3F73E4F31AA7A4FF00FE14A6 /* MusicSequenceTransposer.swift in Sources */,

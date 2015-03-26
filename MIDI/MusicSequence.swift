@@ -67,6 +67,26 @@ func SequenceGetTrackCount(sequence: MusicSequence) -> UInt32? {
     return trackCount
 }
 
+func SequenceNewTrack(sequence: MusicSequence) -> MusicTrack? {
+    var track = MusicTrack()
+    var status = MusicSequenceNewTrack(sequence, &track)
+    
+    if status != noErr {
+        println("Could not add track to sequence")
+        return nil
+    }
+    
+    return track
+}
+
+func SequenceAddTrack(sequence: MusicSequence, track: MusicTrack) -> Bool {
+    var newTrack = SequenceNewTrack(sequence)
+    if let newTrack = newTrack {
+        return TrackMergeAll(track, newTrack)
+    }
+    return false
+}
+
 func SequenceGetTrackByIndex(sequence: MusicSequence, index: UInt32) -> MusicTrack? {
     var track = MusicTrack()
     let status = MusicSequenceGetIndTrack(sequence, index, &track)
@@ -83,7 +103,16 @@ func SequenceClone(sequence: MusicSequence) -> MusicSequence? {
     var clonedSequence = NewSequence()
     
     if let clonedSequence = clonedSequence {
-        // TODO
+        let numOfTracks = SequenceGetTrackCount(sequence)
+        if let numOfTracks = numOfTracks {
+            for index in 0..<numOfTracks {
+                var track = SequenceGetTrackByIndex(sequence, index)
+                if let track = track {
+                    SequenceAddTrack(clonedSequence, track)
+                }
+            }
+            return clonedSequence
+        }
     }
     
     return nil

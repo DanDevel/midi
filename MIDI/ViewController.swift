@@ -15,33 +15,16 @@ class ViewController: UIViewController {
     
     @IBAction func createSequence(sender: AnyObject) {
         let fileURL = NSBundle.mainBundle().URLForResource("bossanuevewext", withExtension: "mid")
-        // load sequence from file
-        var sequence = MusicSequenceWrapper(url: fileURL)
-        if sequence == nil {
-            println("Sequence Failed To Load")
-            return
+        var sequence = SequenceLoadFromFile(fileURL)
+
+        if let sequence = sequence {
+            // print untransposed track
+            CAShow(UnsafeMutablePointer<MusicTrack>(SequenceGetTrackByIndex(sequence, 1)!))
+            // transpose track
+            let transposedTrack = TransposeTrack(sequence, 1, 2)
+            // print transposed track
+            CAShow(UnsafeMutablePointer<MusicTrack>(transposedTrack!))
         }
-        
-        // create transposer
-        var transposer = MusicSequenceTransposer(sequence: sequence!)
-        
-        
-        // print original sequence
-//        var raw_sequence = sequence!.getSequence()
-//        CAShow(&sequence)
-        
-        // transpose
-        var track = transposer.transposeTrack(1, dNote: 2)!
-        
-        // print transposed track
-        CAShow(UnsafeMutablePointer<MusicTrack>(track))
-        
-        // transpose
-        track = transposer.transposeTrack(1, dNote: 1)!
-        
-        // print transposed track
-        CAShow(UnsafeMutablePointer<MusicTrack>(track))
-        
     }
     
     override func viewDidLoad() {
