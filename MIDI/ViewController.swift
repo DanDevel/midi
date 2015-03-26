@@ -14,6 +14,7 @@ class ViewController: UIViewController {
     let sequence = ViewController.loadSequence()
     
     @IBOutlet var btnTransposeSequence: UIButton!
+    @IBOutlet var btnPlaySequence: UIButton!
     @IBOutlet var stpTrack: UIStepper!
     @IBOutlet var stpTranspose: UIStepper!
     @IBOutlet var lblTrack: UITextField!
@@ -33,6 +34,20 @@ class ViewController: UIViewController {
             let transposedTrack = TransposeTrack(sequence, UInt32(stpTrack.value), Int8(stpTranspose.value))
             // print transposed track
             CAShow(UnsafeMutablePointer<MusicTrack>(transposedTrack!))
+        }
+    }
+    
+    @IBAction func playSequence(sender: AnyObject) {
+        if let sequence = sequence {
+            var player = NewPlayer()
+            if let player = player {
+                var status = PlayerSetSequence(player, sequence)
+                println("set sequence: \(status)")
+                status = PlayerStart(player)
+                println("started player: \(status)")
+                
+                status = DisposePlayer(player)
+            }
         }
     }
     

@@ -21,7 +21,7 @@ func NewPlayer() -> MusicPlayer? {
     return player
 }
 
-func PlayerDispose(player: MusicPlayer) -> Bool {
+func DisposePlayer(player: MusicPlayer) -> Bool {
     let status = DisposeMusicPlayer(player)
     
     if status != noErr {

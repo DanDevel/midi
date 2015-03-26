@@ -53,7 +53,7 @@ func TransposeTrack(track: MusicTrack, transpose: Int8) -> MusicTrack? {
                 let noteEvent = IteratorGetCurrentNoteEvent(iterator)
                 if let noteEvent = noteEvent {
                     var newNote = Int8(noteEvent.note) + transpose
-                    newNote = newNote < 0 ? 0 : newNote //change to error, since we can't transpose any lower
+                    newNote = newNote < 0 ? 0 : newNote // TODO change to error, since we can't transpose any lower
                     let newNoteEvent = MIDINoteMessage(channel: noteEvent.channel, note: UInt8(newNote), velocity: noteEvent.velocity,
                         releaseVelocity: noteEvent.releaseVelocity, duration: noteEvent.duration)
                     IteratorSetCurrentNoteEvent(iterator, newNoteEvent)

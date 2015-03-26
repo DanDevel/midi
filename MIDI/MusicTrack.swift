@@ -24,6 +24,7 @@ func TrackGetLength(track: MusicTrack) -> MusicTimeStamp? {
     return trackLength
 }
 
+// TODO dispose of sequence?
 func TrackClone(track: MusicTrack) -> MusicTrack? {
     let sequence = NewSequence()
     if let sequence = sequence {

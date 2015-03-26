@@ -21,6 +21,17 @@ func NewSequence() -> MusicSequence? {
     return sequence
 }
 
+func DisposeSequence(sequence: MusicSequence) -> Bool {
+    let status = DisposeMusicSequence(sequence)
+    
+    if status != noErr {
+        println("Failed to dispose of sequence")
+        return false
+    }
+    
+    return true
+}
+
 func SequenceLoadFromFile(url: NSURL?) -> MusicSequence? {
     let typeId = MusicSequenceFileTypeID(kMusicSequenceFile_MIDIType)
     let flags = MusicSequenceLoadFlags(kMusicSequenceLoadSMF_ChannelsToTracks)
