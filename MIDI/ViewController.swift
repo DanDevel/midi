@@ -11,20 +11,34 @@ import AudioToolbox
 
 class ViewController: UIViewController {
 
-    @IBOutlet var btnCreateSequence: UIButton!
+    let sequence = ViewController.loadSequence()
     
-    @IBAction func createSequence(sender: AnyObject) {
-        let fileURL = NSBundle.mainBundle().URLForResource("bossanuevewext", withExtension: "mid")
-        var sequence = SequenceLoadFromFile(fileURL)
-
+    @IBOutlet var btnTransposeSequence: UIButton!
+    @IBOutlet var stpTrack: UIStepper!
+    @IBOutlet var stpTranspose: UIStepper!
+    @IBOutlet var lblTrack: UITextField!
+    @IBOutlet var lblTranspose: UITextField!
+    
+    @IBAction func updateTrack(sender: AnyObject) {
+        lblTrack.text = String(UInt32(stpTrack.value))
+    }
+    
+    @IBAction func updateTranspose(sender: AnyObject) {
+        lblTranspose.text = String(Int8(stpTranspose.value))
+    }
+    
+    @IBAction func transposeSequence(sender: AnyObject) {
         if let sequence = sequence {
-            // print untransposed track
-            CAShow(UnsafeMutablePointer<MusicTrack>(SequenceGetTrackByIndex(sequence, 1)!))
             // transpose track
-            let transposedTrack = TransposeTrack(sequence, 1, 2)
+            let transposedTrack = TransposeTrack(sequence, UInt32(stpTrack.value), Int8(stpTranspose.value))
             // print transposed track
             CAShow(UnsafeMutablePointer<MusicTrack>(transposedTrack!))
         }
+    }
+    
+    private class func loadSequence() -> MusicSequence? {
+        let fileURL = NSBundle.mainBundle().URLForResource("bossanuevewext", withExtension: "mid")
+        return SequenceLoadFromFile(fileURL)
     }
     
     override func viewDidLoad() {

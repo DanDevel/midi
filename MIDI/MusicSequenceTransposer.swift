@@ -9,7 +9,7 @@
 import AudioToolbox
 
 // be wary of drum track (MIDI std channel 10)
-func TransposeSequence(sequence: MusicSequence, transpose: UInt8) -> MusicSequence? {
+func TransposeSequence(sequence: MusicSequence, transpose: Int8) -> MusicSequence? {
     let trackCount = SequenceGetTrackCount(sequence)
     var transposedSequence = NewSequence()
     if let transposedSequence = transposedSequence {
@@ -34,7 +34,7 @@ func TransposeSequence(sequence: MusicSequence, transpose: UInt8) -> MusicSequen
     return nil
 }
 
-func TransposeTrack(sequence: MusicSequence, index: UInt32, transpose: UInt8) -> MusicTrack? {
+func TransposeTrack(sequence: MusicSequence, index: UInt32, transpose: Int8) -> MusicTrack? {
     let track = SequenceGetTrackByIndex(sequence, index)
     if let track = track {
         return TransposeTrack(track, transpose)
@@ -42,7 +42,7 @@ func TransposeTrack(sequence: MusicSequence, index: UInt32, transpose: UInt8) ->
     return nil
 }
 
-func TransposeTrack(track: MusicTrack, transpose: UInt8) -> MusicTrack? {
+func TransposeTrack(track: MusicTrack, transpose: Int8) -> MusicTrack? {
     var transposedTrack = TrackClone(track)
     if let transposedTrack = transposedTrack {
         let iterator = NewIterator(transposedTrack)
@@ -52,8 +52,9 @@ func TransposeTrack(track: MusicTrack, transpose: UInt8) -> MusicTrack? {
                 // transpose note
                 let noteEvent = IteratorGetCurrentNoteEvent(iterator)
                 if let noteEvent = noteEvent {
-                    let newNote = noteEvent.note + transpose
-                    let newNoteEvent = MIDINoteMessage(channel: noteEvent.channel, note: newNote, velocity: noteEvent.velocity,
+                    var newNote = Int8(noteEvent.note) + transpose
+                    newNote = newNote < 0 ? 0 : newNote //change to error, since we can't transpose any lower
+                    let newNoteEvent = MIDINoteMessage(channel: noteEvent.channel, note: UInt8(newNote), velocity: noteEvent.velocity,
                         releaseVelocity: noteEvent.releaseVelocity, duration: noteEvent.duration)
                     IteratorSetCurrentNoteEvent(iterator, newNoteEvent)
                 }
