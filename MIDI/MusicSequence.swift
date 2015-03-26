@@ -21,7 +21,7 @@ func NewSequence() -> MusicSequence? {
     return sequence
 }
 
-func LoadSequenceFromFile(url: NSURL?) -> MusicSequence? {
+func SequenceLoadFromFile(url: NSURL?) -> MusicSequence? {
     let typeId = MusicSequenceFileTypeID(kMusicSequenceFile_MIDIType)
     let flags = MusicSequenceLoadFlags(kMusicSequenceLoadSMF_ChannelsToTracks)
     
@@ -41,7 +41,7 @@ func LoadSequenceFromFile(url: NSURL?) -> MusicSequence? {
     return nil
 }
 
-func SaveSequenceToFile(sequence: MusicSequence, url: NSURL?) -> Bool {
+func SequenceSaveToFile(sequence: MusicSequence, url: NSURL?) -> Bool {
     let typeId = MusicSequenceFileTypeID(kMusicSequenceFile_MIDIType)
     let flags = MusicSequenceLoadFlags(kMusicSequenceFileFlags_EraseFile)
     
@@ -55,7 +55,7 @@ func SaveSequenceToFile(sequence: MusicSequence, url: NSURL?) -> Bool {
     return true
 }
 
-func GetSequenceTrackCount(sequence: MusicSequence) -> UInt32? {
+func SequenceGetTrackCount(sequence: MusicSequence) -> UInt32? {
     var trackCount: UInt32 = 0
     let status = MusicSequenceGetTrackCount(sequence, &trackCount)
     
@@ -67,7 +67,7 @@ func GetSequenceTrackCount(sequence: MusicSequence) -> UInt32? {
     return trackCount
 }
 
-func GetSequenceTrackByIndex(sequence: MusicSequence, index: UInt32) -> MusicTrack? {
+func SequenceGetTrackByIndex(sequence: MusicSequence, index: UInt32) -> MusicTrack? {
     var track = MusicTrack()
     let status = MusicSequenceGetIndTrack(sequence, index, &track)
     
@@ -79,7 +79,7 @@ func GetSequenceTrackByIndex(sequence: MusicSequence, index: UInt32) -> MusicTra
     return track
 }
 
-func CloneSequence(sequence: MusicSequence) -> MusicSequence? {
+func SequenceClone(sequence: MusicSequence) -> MusicSequence? {
     var clonedSequence = NewSequence()
     
     if let clonedSequence = clonedSequence {
