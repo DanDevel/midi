@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3F5C57C61AC46B3100D9DF44 /* MusicPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5C57C51AC46B3100D9DF44 /* MusicPlayer.swift */; };
+		3F5C57C71AC46B3100D9DF44 /* MusicPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5C57C51AC46B3100D9DF44 /* MusicPlayer.swift */; };
 		3F73E4EC1AA7977B00FE14A6 /* bossanuevewext.mid in Resources */ = {isa = PBXBuildFile; fileRef = 3F73E4EB1AA7977B00FE14A6 /* bossanuevewext.mid */; };
 		3F73E4F01AA7A0F600FE14A6 /* MusicSequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FCF2B8C1AA37F4B00B3E309 /* MusicSequence.swift */; };
 		3F73E4F21AA7A4FF00FE14A6 /* MusicSequenceTransposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F73E4F11AA7A4FF00FE14A6 /* MusicSequenceTransposer.swift */; };
@@ -35,6 +37,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3F5C57C51AC46B3100D9DF44 /* MusicPlayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MusicPlayer.swift; sourceTree = "<group>"; };
 		3F73E4EB1AA7977B00FE14A6 /* bossanuevewext.mid */ = {isa = PBXFileReference; lastKnownFileType = audio.midi; path = bossanuevewext.mid; sourceTree = "<group>"; };
 		3F73E4F11AA7A4FF00FE14A6 /* MusicSequenceTransposer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MusicSequenceTransposer.swift; sourceTree = "<group>"; };
 		3F73E4F41AA7A75500FE14A6 /* MusicEventIterator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MusicEventIterator.swift; sourceTree = "<group>"; };
@@ -101,6 +104,7 @@
 				3FB98ABB1AA8F66B00C48F31 /* MusicTrack.swift */,
 				3F73E4F41AA7A75500FE14A6 /* MusicEventIterator.swift */,
 				3F73E4F11AA7A4FF00FE14A6 /* MusicSequenceTransposer.swift */,
+				3F5C57C51AC46B3100D9DF44 /* MusicPlayer.swift */,
 			);
 			path = MIDI;
 			sourceTree = "<group>";
@@ -235,6 +239,7 @@
 				3FB98ABC1AA8F66B00C48F31 /* MusicTrack.swift in Sources */,
 				3FCF2B671A9E593600B3E309 /* AppDelegate.swift in Sources */,
 				3F73E4F21AA7A4FF00FE14A6 /* MusicSequenceTransposer.swift in Sources */,
+				3F5C57C61AC46B3100D9DF44 /* MusicPlayer.swift in Sources */,
 				3F73E4F51AA7A75500FE14A6 /* MusicEventIterator.swift in Sources */,
 				3FCF2B8D1AA37F4B00B3E309 /* MusicSequence.swift in Sources */,
 			);
@@ -246,6 +251,7 @@
 			files = (
 				3FE7645B1AC3E20C001E942F /* MusicTrack.swift in Sources */,
 				3F73E4F01AA7A0F600FE14A6 /* MusicSequence.swift in Sources */,
+				3F5C57C71AC46B3100D9DF44 /* MusicPlayer.swift in Sources */,
 				3FCF2B7D1A9E593600B3E309 /* MIDITests.swift in Sources */,
 				3F73E4F31AA7A4FF00FE14A6 /* MusicSequenceTransposer.swift in Sources */,
 				3F73E4F61AA7A75500FE14A6 /* MusicEventIterator.swift in Sources */,
