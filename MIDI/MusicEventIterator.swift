@@ -46,9 +46,9 @@ func IteratorHasCurrentEvent(iterator: MusicEventIterator) -> Bool {
 }
 
 func IteratorToNextEvent(iterator: MusicEventIterator) -> Bool {
-//    if !hasNext() {
-//        return false
-//    }
+    if !IteratorHasNextEvent(iterator) {
+        return false
+    }
     
     let status = MusicEventIteratorNextEvent(iterator)
     
