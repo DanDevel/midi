@@ -13,6 +13,8 @@ class ViewController: UIViewController {
 
     let sequence = ViewController.loadSequence()
     
+    
+    
     @IBOutlet var btnTransposeSequence: UIButton!
     @IBOutlet var btnPlaySequence: UIButton!
     @IBOutlet var stpTrack: UIStepper!
@@ -39,20 +41,74 @@ class ViewController: UIViewController {
     
     @IBAction func playSequence(sender: AnyObject) {
         if let sequence = sequence {
-            var player = NewPlayer()
-            if let player = player {
-                var status = PlayerSetSequence(player, sequence)
-                println("set sequence: \(status)")
-                status = PlayerStart(player)
-                println("started player: \(status)")
+            
+            // create new AUGraph
+            var graph = NewMIDIGraph()
+            if let graph = graph {
                 
-                status = DisposePlayer(player)
+                // start the graph
+                if GraphStart(graph) {
+                    
+                    // get sampler node
+                    if let samplerNode = GraphGetNode(graph, 0) { // keep track of this index
+                        
+                        // get sampler unit
+                        if let samplerUnit = GraphGetAudioUnit(graph, samplerNode) {
+                            
+                            // add sound font
+                            if GraphAddSoundFontToAudioUnit("Gorts_Filters", samplerUnit) {
+                                
+                                // associate the sequence with the graph
+                                if SequenceSetAUGraph(sequence, graph) {
+                                    
+                                    // create new music player
+                                    var player = NewPlayer()
+                                    if let player = player {
+                                        
+                                        // add the sequence to the player
+                                        if PlayerSetSequence(player, sequence) {
+                                            
+                                            // start the player
+                                            if PlayerPlayFromBeginning(player) {
+                                                println("Player started.")
+                                                CAShow(UnsafeMutablePointer<AUGraph>(graph))
+//                                                CAShow(UnsafeMutablePointer<MusicSequence>(sequence))
+                                                
+                                                // get first track
+                                                if let track = SequenceGetTrackByIndex(sequence, 0) {
+                                                    
+                                                    // get track length
+                                                    if let trackLength = TrackGetLength(track) {
+                                                        
+                                                        // TODO remove this from UI thread
+                                                        while (true) {
+//                                                            sleep(1)
+                                                            println(trackLength)
+                                                            var now = PlayerGetTime(player)
+                                                            if (now >= trackLength) {
+                                                                break
+                                                            }
+                                                        }
+                                                        
+                                                        PlayerStop(player)
+                                                        SequenceDispose(sequence)
+                                                        PlayerDispose(player)
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }
     
     private class func loadSequence() -> MusicSequence? {
-        let fileURL = NSBundle.mainBundle().URLForResource("bossanuevewext", withExtension: "mid")
+        let fileURL = NSBundle.mainBundle().URLForResource("simpletest", withExtension: "mid")
         return SequenceLoadFromFile(fileURL)
     }
     

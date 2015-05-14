@@ -21,7 +21,7 @@ func NewPlayer() -> MusicPlayer? {
     return player
 }
 
-func DisposePlayer(player: MusicPlayer) -> Bool {
+func PlayerDispose(player: MusicPlayer) -> Bool {
     let status = DisposeMusicPlayer(player)
     
     if status != noErr {
@@ -41,6 +41,51 @@ func PlayerSetSequence(player: MusicPlayer, sequence: MusicSequence) -> Bool {
     }
     
     return true
+}
+
+func PlayerIsPlaying(player: MusicPlayer) -> Bool {
+    var playing = Boolean()
+    let status = MusicPlayerIsPlaying(player, &playing)
+    if status != noErr {
+        println("Could not check if music player is playing")
+        return false
+    }
+    return playing != 0
+}
+
+func PlayerGetTime(player: MusicPlayer) -> MusicTimeStamp? {
+    var time = MusicTimeStamp()
+    let status = MusicPlayerGetTime(player, &time)
+    if status != noErr {
+        println("Could not get player time")
+        return nil
+    }
+    return time
+}
+
+func PlayerSetTime(player: MusicPlayer, time: MusicTimeStamp) -> Bool {
+    let status = MusicPlayerSetTime(player, time)
+    if status != noErr {
+        println("could not set time")
+        return false
+    }
+    return true
+}
+
+func PlayerResetTime(player: MusicPlayer) -> Bool {
+    return PlayerSetTime(player, 0)
+}
+
+func PlayerPlayFromBeginning(player: MusicPlayer) -> Bool{
+    if PlayerIsPlaying(player) {
+        if !PlayerStop(player) {
+            return false
+        }
+    }
+    if PlayerResetTime(player) {
+        return PlayerStart(player)
+    }
+    return false
 }
 
 func PlayerStart(player: MusicPlayer) -> Bool {

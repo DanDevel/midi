@@ -21,7 +21,7 @@ func NewSequence() -> MusicSequence? {
     return sequence
 }
 
-func DisposeSequence(sequence: MusicSequence) -> Bool {
+func SequenceDispose(sequence: MusicSequence) -> Bool {
     let status = DisposeMusicSequence(sequence)
     
     if status != noErr {
@@ -127,4 +127,13 @@ func SequenceClone(sequence: MusicSequence) -> MusicSequence? {
     }
     
     return nil
+}
+
+func SequenceSetAUGraph(sequence: MusicSequence, graph: AUGraph) -> Bool {
+    let status = MusicSequenceSetAUGraph(sequence, graph)
+    if status != noErr {
+        println("Could not set au graph")
+        return false
+    }
+    return true
 }

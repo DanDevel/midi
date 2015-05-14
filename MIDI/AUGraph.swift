@@ -19,6 +19,47 @@ func NewGraph() -> AUGraph? {
     return graph
 }
 
+func NewMIDIGraph() -> AUGraph? {
+    // create new graph
+    var graph = NewGraph()
+    if let graph = graph {
+        
+        // add sampler node to graph
+        let samplerNode = GraphAddSamplerNode(graph)
+        if let samplerNode = samplerNode {
+            
+            // add io node to graph
+            let ioNode = GraphAddIONode(graph)
+            if let ioNode = ioNode {
+                
+                // open the graph
+                if GraphOpen(graph) {
+                    
+                    // connect the sampler and io node
+                    if GraphConnectNodes(graph, samplerNode, 0, ioNode, 0) {
+                        
+                        // initialize the graph
+                        if GraphInitialize(graph) {
+                            return graph
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return nil
+}
+
+func GraphGetNode(graph: AUGraph, index: UInt32) -> AUNode? {
+    var node = AUNode()
+    let status = AUGraphGetIndNode(graph, index, &node)
+    if status != noErr {
+        println("Failed to get node")
+        return nil
+    }
+    return node
+}
+
 func GraphAddNode(graph: AUGraph, inout componentDesc: AudioComponentDescription, inout node: AUNode) -> AUNode? {
     let status = AUGraphAddNode(graph, &componentDesc, &node)
     if status != noErr {
@@ -87,7 +128,7 @@ func GraphIsInitalized(graph: AUGraph) -> Bool {
         println("Could not check if graph was initialized")
         return false
     }
-    return isInitialized == 0
+    return isInitialized != 0
 }
 
 func GraphInitialize(graph: AUGraph) -> Bool {
@@ -109,7 +150,7 @@ func GraphIsRunning(graph: AUGraph) -> Bool {
         println("Could not check is graph was running")
         return false
     }
-    return isRunning == 0
+    return isRunning != 0
 }
 
 func GraphStart(graph: AUGraph) -> Bool {
@@ -118,6 +159,33 @@ func GraphStart(graph: AUGraph) -> Bool {
         let status = AUGraphStart(graph)
         if status != noErr {
             println("Could not start graph")
+            return false
+        }
+        return true
+    }
+    return false
+}
+
+// TODO: add preset param
+func GraphAddSoundFontToAudioUnit(filename: String, unit: AudioUnit) -> Bool {
+    if let url = NSBundle.mainBundle().URLForResource("piano", withExtension: "sf2") {
+        var instrumentData = AUSamplerInstrumentData(
+            fileURL: Unmanaged.passUnretained(url),
+            instrumentType: UInt8(kInstrumentType_DLSPreset),
+            bankMSB: UInt8(kAUSampler_DefaultMelodicBankMSB),
+            bankLSB: UInt8(kAUSampler_DefaultBankLSB),
+            presetID: 0)
+        
+        let status = AudioUnitSetProperty(
+            unit,
+            UInt32(kAUSamplerProperty_LoadInstrument),
+            UInt32(kAudioUnitScope_Global),
+            0,
+            &instrumentData,
+            UInt32(sizeof(AUSamplerInstrumentData)))
+        
+        if status != noErr {
+            println("Could not add sound font")
             return false
         }
         return true
