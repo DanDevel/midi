@@ -11,8 +11,9 @@ import AudioToolbox
 
 class ViewController: UIViewController {
 
-    let sequence = ViewController.loadSequence()
-    
+    var sequence: MusicSequence?
+    var graph: AUGraph?
+    var player: MusicPlayer?
     
     
     @IBOutlet var btnTransposeSequence: UIButton!
@@ -40,66 +41,25 @@ class ViewController: UIViewController {
     }
     
     @IBAction func playSequence(sender: AnyObject) {
-        if let sequence = sequence {
+        // get the graph
+        if let graph = graph {
             
-            // create new AUGraph
-            var graph = NewMIDIGraph()
-            if let graph = graph {
+            // start the graph
+            if GraphStart(graph) {
                 
-                // start the graph
-                if GraphStart(graph) {
+                // get the player
+                if let player = player {
                     
-                    // get sampler node
-                    if let samplerNode = GraphGetNode(graph, 0) { // keep track of this index
+                    // start the player
+                    if PlayerPlayFromBeginning(player) {
                         
-                        // get sampler unit
-                        if let samplerUnit = GraphGetAudioUnit(graph, samplerNode) {
+                        // get the sequence
+                        if let sequence = sequence {
                             
-                            // add sound font
-                            if GraphAddSoundFontToAudioUnit("Gorts_Filters", samplerUnit) {
-                                
-                                // associate the sequence with the graph
-                                if SequenceSetAUGraph(sequence, graph) {
-                                    
-                                    // create new music player
-                                    var player = NewPlayer()
-                                    if let player = player {
-                                        
-                                        // add the sequence to the player
-                                        if PlayerSetSequence(player, sequence) {
-                                            
-                                            // start the player
-                                            if PlayerPlayFromBeginning(player) {
-                                                println("Player started.")
-                                                CAShow(UnsafeMutablePointer<AUGraph>(graph))
-//                                                CAShow(UnsafeMutablePointer<MusicSequence>(sequence))
-                                                
-                                                // get first track
-                                                if let track = SequenceGetTrackByIndex(sequence, 0) {
-                                                    
-                                                    // get track length
-                                                    if let trackLength = TrackGetLength(track) {
-                                                        
-                                                        // TODO remove this from UI thread
-                                                        while (true) {
-//                                                            sleep(1)
-                                                            println(trackLength)
-                                                            var now = PlayerGetTime(player)
-                                                            if (now >= trackLength) {
-                                                                break
-                                                            }
-                                                        }
-                                                        
-                                                        PlayerStop(player)
-                                                        SequenceDispose(sequence)
-                                                        PlayerDispose(player)
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
+                            println("Player started.")
+                            CAShow(UnsafeMutablePointer<AUGraph>(graph))
+                            //CAShow(UnsafeMutablePointer<MusicSequence>(sequence))
+                            
                         }
                     }
                 }
@@ -107,14 +67,16 @@ class ViewController: UIViewController {
         }
     }
     
-    private class func loadSequence() -> MusicSequence? {
-        let fileURL = NSBundle.mainBundle().URLForResource("simpletest", withExtension: "mid")
-        return SequenceLoadFromFile(fileURL)
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        
+        let fileURL = NSBundle.mainBundle().URLForResource("simpletest", withExtension: "mid")
+        sequence = SequenceLoadFromFile(fileURL)
+        
+        if let sequence = sequence {
+            graph = NewMIDIGraph("Gorts_Filters", sequence)
+            player = NewPlayerWithSequence(sequence)
+        }
     }
 
     override func didReceiveMemoryWarning() {

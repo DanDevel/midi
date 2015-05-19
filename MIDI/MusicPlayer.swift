@@ -9,6 +9,7 @@
 import AudioToolbox
 
 
+
 func NewPlayer() -> MusicPlayer? {
     var player = MusicPlayer()
     let status = NewMusicPlayer(&player)
@@ -41,6 +42,15 @@ func PlayerSetSequence(player: MusicPlayer, sequence: MusicSequence) -> Bool {
     }
     
     return true
+}
+
+func NewPlayerWithSequence(sequence: MusicSequence) -> MusicPlayer? {
+    if let player = NewPlayer() {
+        if PlayerSetSequence(player, sequence) {
+            return player
+        }
+    }
+    return nil
 }
 
 func PlayerIsPlaying(player: MusicPlayer) -> Bool {
