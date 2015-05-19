@@ -31,6 +31,7 @@ class ViewController: UIViewController {
         lblTranspose.text = String(Int8(stpTranspose.value))
     }
     
+    //TODO have sequence reference the new transposition
     @IBAction func transposeSequence(sender: AnyObject) {
         if let sequence = sequence {
             // transpose track
@@ -43,7 +44,7 @@ class ViewController: UIViewController {
     @IBAction func playSequence(sender: AnyObject) {
         // get the graph
         if let graph = graph {
-            
+            GraphStart(graph) //TODO make better implementation! false vals are okay
             // start the graph
             if GraphStart(graph) {
                 
@@ -70,11 +71,11 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let fileURL = NSBundle.mainBundle().URLForResource("simpletest", withExtension: "mid")
+        let fileURL = NSBundle.mainBundle().URLForResource("bossanuevewext", withExtension: "mid")
         sequence = SequenceLoadFromFile(fileURL)
         
         if let sequence = sequence {
-            graph = NewMIDIGraph("Gorts_Filters", sequence)
+            graph = NewMIDIGraph("piano", sequence)
             player = NewPlayerWithSequence(sequence)
         }
     }

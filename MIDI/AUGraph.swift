@@ -226,7 +226,7 @@ func GraphIsRunning(graph: AUGraph) -> Bool {
 // TODO: add preset param
 // Add Sound Font to Audio Unit
 func GraphAddSoundFontToAudioUnit(filename: String, unit: AudioUnit) -> Bool {
-    if let url = NSBundle.mainBundle().URLForResource("piano", withExtension: "sf2") {
+    if let url = NSBundle.mainBundle().URLForResource(filename, withExtension: "sf2") {
         var instrumentData = AUSamplerInstrumentData(
             fileURL: Unmanaged.passUnretained(url),
             instrumentType: UInt8(kInstrumentType_DLSPreset),
