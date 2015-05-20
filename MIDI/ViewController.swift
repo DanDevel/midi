@@ -16,12 +16,14 @@ class ViewController: UIViewController {
     var player: MusicPlayer?
     
     
+    @IBOutlet var btnResetSequence: UIButton!
     @IBOutlet var btnTransposeSequence: UIButton!
     @IBOutlet var btnPlaySequence: UIButton!
     @IBOutlet var stpTrack: UIStepper!
     @IBOutlet var stpTranspose: UIStepper!
     @IBOutlet var lblTrack: UITextField!
     @IBOutlet var lblTranspose: UITextField!
+    
     
     @IBAction func updateTrack(sender: AnyObject) {
         lblTrack.text = String(UInt32(stpTrack.value))
@@ -33,41 +35,56 @@ class ViewController: UIViewController {
     
     //TODO have sequence reference the new transposition
     @IBAction func transposeSequence(sender: AnyObject) {
+        // get the sequence
         if let sequence = sequence {
+            
             // transpose track
             let transposedTrack = TransposeTrack(sequence, UInt32(stpTrack.value), Int8(stpTranspose.value))
+            
             // print transposed track
             CAShow(UnsafeMutablePointer<MusicTrack>(transposedTrack!))
         }
     }
     
+    @IBAction func resetSequence(sender: AnyObject) {
+        // get the player
+        if let player = player {
+            
+            // stop the player if started
+            if PlayerIsPlaying(player) {
+                PlayerStop(player)
+                btnPlaySequence.setTitle("Play", forState: UIControlState.Normal)
+            }
+            
+            // reset the player
+            PlayerResetTime(player)
+            println("RESET")
+        }
+    }
+    
     @IBAction func playSequence(sender: AnyObject) {
-        // get the graph
-        if let graph = graph {
-            GraphStart(graph) //TODO make better implementation! false vals are okay
-            // start the graph
-            if GraphStart(graph) {
+        // get the player
+        if let player = player {
+            
+            if btnPlaySequence.titleLabel!.text! == "Play" {
                 
-                // get the player
-                if let player = player {
-                    
-                    // start the player
-                    if PlayerPlayFromBeginning(player) {
-                        
-                        // get the sequence
-                        if let sequence = sequence {
-                            
-                            println("Player started.")
-                            CAShow(UnsafeMutablePointer<AUGraph>(graph))
-                            //CAShow(UnsafeMutablePointer<MusicSequence>(sequence))
-                            
-                        }
-                    }
+                // start the player
+                if PlayerStart(player) {
+                    btnPlaySequence.setTitle("Pause", forState: UIControlState.Normal)
+                    println("PLAY")
+                }
+            } else {
+                
+                // pause the player
+                if PlayerStop(player) {
+                    btnPlaySequence.setTitle("Play", forState: UIControlState.Normal)
+                    println("PAUSE")
                 }
             }
         }
     }
     
+    // on load, set up sequence, graph, and player
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -75,7 +92,7 @@ class ViewController: UIViewController {
         sequence = SequenceLoadFromFile(fileURL)
         
         if let sequence = sequence {
-            graph = NewMIDIGraph("piano", sequence)
+            graph = NewMIDIGraph("GeneralUser GS MuseScore v1.442", sequence)
             player = NewPlayerWithSequence(sequence)
         }
     }

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3F08C3341B0CBEAA0067AADE /* MusicGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F08C3331B0CBEAA0067AADE /* MusicGraph.swift */; };
 		3F3412B51AD2DD52009C3A46 /* AUGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F3412B41AD2DD52009C3A46 /* AUGraph.swift */; };
 		3F3412B61AD2DD52009C3A46 /* AUGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F3412B41AD2DD52009C3A46 /* AUGraph.swift */; };
 		3F5C57C61AC46B3100D9DF44 /* MusicPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5C57C51AC46B3100D9DF44 /* MusicPlayer.swift */; };
@@ -17,6 +18,7 @@
 		3F73E4F31AA7A4FF00FE14A6 /* MusicSequenceTransposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F73E4F11AA7A4FF00FE14A6 /* MusicSequenceTransposer.swift */; };
 		3F73E4F51AA7A75500FE14A6 /* MusicEventIterator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F73E4F41AA7A75500FE14A6 /* MusicEventIterator.swift */; };
 		3F73E4F61AA7A75500FE14A6 /* MusicEventIterator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F73E4F41AA7A75500FE14A6 /* MusicEventIterator.swift */; };
+		3F7F981E1B0B8ECA0043F4F3 /* GeneralUser GS MuseScore v1.442.sf2 in Resources */ = {isa = PBXBuildFile; fileRef = 3F7F981D1B0B8ECA0043F4F3 /* GeneralUser GS MuseScore v1.442.sf2 */; };
 		3FA107A21B050A2100A2A346 /* Gorts_Filters.SF2 in Resources */ = {isa = PBXBuildFile; fileRef = 3FA107A01B050A2100A2A346 /* Gorts_Filters.SF2 */; };
 		3FA107A31B050A2100A2A346 /* simpletest.mid in Resources */ = {isa = PBXBuildFile; fileRef = 3FA107A11B050A2100A2A346 /* simpletest.mid */; };
 		3FA107A71B050F4B00A2A346 /* piano.SF2 in Resources */ = {isa = PBXBuildFile; fileRef = 3FA107A61B050F4B00A2A346 /* piano.SF2 */; };
@@ -42,11 +44,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3F08C3331B0CBEAA0067AADE /* MusicGraph.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MusicGraph.swift; sourceTree = "<group>"; };
 		3F3412B41AD2DD52009C3A46 /* AUGraph.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AUGraph.swift; sourceTree = "<group>"; };
 		3F5C57C51AC46B3100D9DF44 /* MusicPlayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MusicPlayer.swift; sourceTree = "<group>"; };
 		3F73E4EB1AA7977B00FE14A6 /* bossanuevewext.mid */ = {isa = PBXFileReference; lastKnownFileType = audio.midi; path = bossanuevewext.mid; sourceTree = "<group>"; };
 		3F73E4F11AA7A4FF00FE14A6 /* MusicSequenceTransposer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MusicSequenceTransposer.swift; sourceTree = "<group>"; };
 		3F73E4F41AA7A75500FE14A6 /* MusicEventIterator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MusicEventIterator.swift; sourceTree = "<group>"; };
+		3F7F981D1B0B8ECA0043F4F3 /* GeneralUser GS MuseScore v1.442.sf2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GeneralUser GS MuseScore v1.442.sf2"; sourceTree = "<group>"; };
 		3FA107A01B050A2100A2A346 /* Gorts_Filters.SF2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = Gorts_Filters.SF2; sourceTree = "<group>"; };
 		3FA107A11B050A2100A2A346 /* simpletest.mid */ = {isa = PBXFileReference; lastKnownFileType = audio.midi; path = simpletest.mid; sourceTree = "<group>"; };
 		3FA107A61B050F4B00A2A346 /* piano.SF2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = piano.SF2; sourceTree = "<group>"; };
@@ -115,6 +119,7 @@
 				3F73E4F11AA7A4FF00FE14A6 /* MusicSequenceTransposer.swift */,
 				3F5C57C51AC46B3100D9DF44 /* MusicPlayer.swift */,
 				3F3412B41AD2DD52009C3A46 /* AUGraph.swift */,
+				3F08C3331B0CBEAA0067AADE /* MusicGraph.swift */,
 			);
 			path = MIDI;
 			sourceTree = "<group>";
@@ -122,6 +127,7 @@
 		3FCF2B641A9E593600B3E309 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				3F7F981D1B0B8ECA0043F4F3 /* GeneralUser GS MuseScore v1.442.sf2 */,
 				3FA107A61B050F4B00A2A346 /* piano.SF2 */,
 				3FA107A01B050A2100A2A346 /* Gorts_Filters.SF2 */,
 				3FA107A11B050A2100A2A346 /* simpletest.mid */,
@@ -227,6 +233,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3F7F981E1B0B8ECA0043F4F3 /* GeneralUser GS MuseScore v1.442.sf2 in Resources */,
 				3FA107A21B050A2100A2A346 /* Gorts_Filters.SF2 in Resources */,
 				3FA107A31B050A2100A2A346 /* simpletest.mid in Resources */,
 				3FA107A71B050F4B00A2A346 /* piano.SF2 in Resources */,
@@ -251,6 +258,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3F08C3341B0CBEAA0067AADE /* MusicGraph.swift in Sources */,
 				3F3412B51AD2DD52009C3A46 /* AUGraph.swift in Sources */,
 				3FCF2B691A9E593600B3E309 /* ViewController.swift in Sources */,
 				3FB98ABC1AA8F66B00C48F31 /* MusicTrack.swift in Sources */,
