@@ -83,6 +83,22 @@ func IteratorGetCurrentNoteEvent(iterator: MusicEventIterator) -> MIDINoteMessag
     return nil
 }
 
+func IteratorGetCurrentMetaEvent(iterator: MusicEventIterator) -> MIDIMetaEvent? {
+    let event = IteratorGetCurrentEvent(iterator)
+    
+    if let event = event {
+        if event.type != MusicEventType(kMusicEventType_Meta) {
+            println("Event isn't meta")
+            return nil
+        }
+        
+        let data = UnsafePointer<MIDIMetaEvent>(event.data)
+        return data.memory
+    }
+    
+    return nil
+}
+
 func IteratorSetCurrentNoteEvent(iterator: MusicEventIterator, noteMessage: MIDINoteMessage) -> Bool {
     var message: MIDINoteMessage = noteMessage
     let type = MusicEventType(kMusicEventType_MIDINoteMessage)
@@ -113,6 +129,29 @@ private func IteratorSetCurrentEvent(iterator: MusicEventIterator, event: Iterat
     }
     
     return true
+}
+
+func IteratorGetMetaEvents(iterator: MusicEventIterator) -> Array<MIDIMetaEvent> {
+    var events = Array<MIDIMetaEvent>()
+    var hasCurrentEvent = IteratorHasCurrentEvent(iterator)
+    while  hasCurrentEvent {
+        // transpose note
+        let noteEvent = IteratorGetCurrentMetaEvent(iterator)!
+        events.append(noteEvent)
+        hasCurrentEvent = IteratorToNextEvent(iterator)
+    }
+    return events
+}
+
+// TODO
+func MetaEventGetContent(event: MIDIMetaEvent) -> String {
+//    event.data.value
+//    event.data
+//    NSData(bytes: raw, length: event.dataLength)
+//    var data = NSData(bytes: event.data.value, length: event.dataLength.value)
+//    return NSString(data: data, encoding: NSUTF8StringEncoding)
+    println(event.data)
+    return "Bass"
 }
 
 

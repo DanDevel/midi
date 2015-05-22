@@ -170,6 +170,23 @@ class MusicGraph {
     
     init(sequence: MusicSequence) {
         
+        setGraph(newGraph()!)
+        open()
+        setIONode("IO", bus: 0)
+        
+        var track = SequenceGetLastTrack(sequence)!
+        var iterator = NewIterator(track)!
+        var events = IteratorGetMetaEvents(iterator)
+        var bus: UInt32 = 0
+        var t: UInt32 = 0
+        for var i = 1; i < events.count; i+=2 {
+            addInstrument(MetaEventGetContent(events[i]), bus: bus, track: SequenceGetTrackByIndex(sequence, t)!)
+            bus++
+            t++
+        }
+        
+        GraphInitialize(self.graph!)
+        SequenceSetAUGraph(sequence, self.graph!)
     }
     
     private func setGraph(graph: AUGraph) {
@@ -196,13 +213,15 @@ class MusicGraph {
         return node;
     }
     
-    func addInstrument(name: String) {
-        var node = addSamplerNode(name)
+    func addInstrument(name: String, bus: UInt32, track: MusicTrack) {
+        var node = addSamplerNode(name, bus: bus)
         connectNodes(node.data, sourceOutputNumber: node.bus, destNode: self.ioNode!.data, destOutputNumber: self.ioNode!.bus)
+        addSoundFontToAudioUnit(UInt8(soundfontPresets[node.name]!), unit: node.unit)
+        MusicTrackSetDestNode(track, node.data)
     }
     
     // Adds a Sampler node to the AUGraph
-    private func addSamplerNode(name: String) -> Node {
+    private func addSamplerNode(name: String, bus: UInt32) -> Node {
         var componentDesc = AudioComponentDescription(
             componentType: OSType(kAudioUnitType_MusicDevice),
             componentSubType: OSType(kAudioUnitSubType_Sampler),
@@ -215,7 +234,16 @@ class MusicGraph {
         
         var samplerNodeUnit = getAudioUnit(samplerNodeData)!
         
-        var samplerNode = Node(name: name, bus: 0, data: samplerNodeData, unit: samplerNodeUnit)
+        // TODO abstract this
+        var n = name
+        if n == "Piano" {
+            n = "Acoustic Grand Piano"
+        } else if n == "Bass" {
+            n = "JazzBass"
+        } else if n == "Drums" {
+            n = "SynthTom"
+        }
+        var samplerNode = Node(name: n, bus: bus, data: samplerNodeData, unit: samplerNodeUnit)
         
         self.samplerNodes.append(samplerNode)
         return samplerNode

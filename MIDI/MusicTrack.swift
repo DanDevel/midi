@@ -9,6 +9,15 @@
 
 import AudioToolbox
 
+func TrackSetDestNode(track: MusicTrack, node: AUNode) -> Bool {
+    let status = MusicTrackSetDestNode(track, node)
+    if status != noErr {
+        println("could not set dest node")
+        return false
+    }
+    return true
+}
+
 func TrackGetLength(track: MusicTrack) -> MusicTimeStamp? {
     var propertyID = UInt32(kSequenceTrackProperty_TrackLength)
     var trackLength: MusicTimeStamp = -1

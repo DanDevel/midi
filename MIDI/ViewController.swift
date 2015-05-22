@@ -15,6 +15,9 @@ class ViewController: UIViewController {
     var graph: AUGraph?
     var player: MusicPlayer?
     
+    // TODO
+    var testGraph: MusicGraph?
+    
     
     @IBOutlet var btnResetSequence: UIButton!
     @IBOutlet var btnTransposeSequence: UIButton!
@@ -92,7 +95,9 @@ class ViewController: UIViewController {
         sequence = SequenceLoadFromFile(fileURL)
         
         if let sequence = sequence {
-            graph = NewMIDIGraph("GeneralUser GS MuseScore v1.442", sequence)
+            testGraph = MusicGraph(sequence: sequence)
+            testGraph!.start()
+//            graph = NewMIDIGraph("GeneralUser GS MuseScore v1.442", sequence)
             player = NewPlayerWithSequence(sequence)
         }
     }

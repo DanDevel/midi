@@ -66,6 +66,10 @@ func SequenceSaveToFile(sequence: MusicSequence, url: NSURL?) -> Bool {
     return true
 }
 
+func SequenceGetLastTrack(sequence: MusicSequence) -> MusicTrack? {
+    return SequenceGetTrackByIndex(sequence, SequenceGetTrackCount(sequence)! - 1)
+}
+
 func SequenceGetTrackCount(sequence: MusicSequence) -> UInt32? {
     var trackCount: UInt32 = 0
     let status = MusicSequenceGetTrackCount(sequence, &trackCount)
