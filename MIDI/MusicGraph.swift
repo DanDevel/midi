@@ -13,13 +13,11 @@ class MusicGraph {
     
     struct Node {
         var name: String
-        var bus: UInt32
         var data: AUNode
         var unit: AudioUnit
         
-        init(name: String, bus: UInt32, data: AUNode, unit: AudioUnit) {
+        init(name: String, data: AUNode, unit: AudioUnit) {
             self.name = name
-            self.bus = bus
             self.data = data
             self.unit = unit
         }
@@ -31,8 +29,9 @@ class MusicGraph {
     
     private var samplerNodes = Array<Node>()
     private var ioNode: Node?
+    private var mixerNode: Node?
     
-    let soundfontPresets = [
+    let soundfontPresets: [String: UInt8] = [
         "Acoustic Grand Piano" : 0,
         "Bright Acoustic Piano" : 1,
         "Electric Grand Piano" : 2,
@@ -165,29 +164,129 @@ class MusicGraph {
     
     init() {
         setGraph(newGraph()!)
-        setIONode("IO", bus: 0)
+        setIONode(addIONode())
+        CAShow(UnsafeMutablePointer<Void>(self.graph!))
     }
     
     init(sequence: MusicSequence) {
-        
         setGraph(newGraph()!)
+        
         open()
-        setIONode("IO", bus: 0)
         
-        var track = SequenceGetLastTrack(sequence)!
-        var iterator = NewIterator(track)!
-        var events = IteratorGetMetaEvents(iterator)
-        var bus: UInt32 = 0
-        var t: UInt32 = 0
-        for var i = 1; i < events.count; i+=2 {
-            addInstrument(MetaEventGetContent(events[i]), bus: bus, track: SequenceGetTrackByIndex(sequence, t)!)
-            bus++
-            t++
-        }
+        addSamplerNode("Piano")
+        addSamplerNode("Bass")
+        addSamplerNode("Drums")
         
-        GraphInitialize(self.graph!)
+        setMixerNode(addMixerNode())
+        setIONode(addIONode())
+        
+        var numBuses = UInt32(3)
+        let numBusesSize = UInt32(sizeofValue(numBuses))
+        AudioUnitSetProperty(
+            mixerNode!.unit,
+            AudioUnitPropertyID(kAudioUnitProperty_ElementCount),
+            AudioUnitScope(kAudioUnitScope_Input),
+            0,
+            &numBuses,
+            numBusesSize)
+        
+        connectNodes(samplerNodes[0].data, sourceOutputNumber: 0, destNode: mixerNode!.data, destOutputNumber: 0)
+        connectNodes(samplerNodes[1].data, sourceOutputNumber: 0, destNode: mixerNode!.data, destOutputNumber: 1)
+        connectNodes(samplerNodes[2].data, sourceOutputNumber: 0, destNode: mixerNode!.data, destOutputNumber: 2)
+        
+        connectNodes(mixerNode!.data, sourceOutputNumber: 0, destNode: ioNode!.data, destOutputNumber: 0)
+        
+        
         SequenceSetAUGraph(sequence, self.graph!)
+        
+        
+        var preset = soundfontPresets[samplerNodes[0].name]!
+        var unit = samplerNodes[0].unit
+        addSoundFontToAudioUnit(preset, unit: unit)
+        
+        preset = soundfontPresets[samplerNodes[1].name]!
+        unit = samplerNodes[1].unit
+        addSoundFontToAudioUnit(preset, unit: unit)
+        
+        preset = soundfontPresets[samplerNodes[2].name]!
+        unit = samplerNodes[2].unit
+        addSoundFontToAudioUnit(preset, unit: unit)
+        
+        
+        var track = SequenceGetTrackByIndex(sequence, 0)!
+        TrackSetDestNode(track, samplerNodes[0].data)
+        
+        track = SequenceGetTrackByIndex(sequence, 1)!
+        TrackSetDestNode(track, samplerNodes[1].data)
+        
+        track = SequenceGetTrackByIndex(sequence, 2)!
+        TrackSetDestNode(track, samplerNodes[2].data)
+        
     }
+    
+//    init(sequence: MusicSequence) {
+//        
+//        setGraph(newGraph()!)
+//        open()
+//        SequenceSetAUGraph(sequence, self.graph!)
+//        setIONode(addIONode("IO", bus: 0))
+//        AudioUnitInitialize(self.ioNode!.unit)
+//        
+//        var track = SequenceGetLastTrack(sequence)!
+//        var iterator = NewIterator(track)!
+//        var events = IteratorGetMetaEvents(iterator)
+//        var bus: UInt32 = 0
+//        var t: UInt32 = 0
+//        for var i = 1; i < events.count; i+=2 {
+//            addInstrument(MetaEventGetContent(events[i]), bus: bus, track: SequenceGetTrackByIndex(sequence, t)!)
+//            bus++
+//            t++
+//        }
+//        
+//        GraphInitialize(self.graph!)
+//        
+////        //abstract this
+////        var sampleRate: Float64 = 44_100
+////        let sampleRateSize = UInt32(sizeofValue(sampleRate))
+////        var result = AudioUnitSetProperty(
+////            self.ioNode!.unit,
+////            AudioUnitPropertyID(kAudioUnitProperty_SampleRate),
+////            AudioUnitScope(kAudioUnitScope_Input),
+////            0,
+////            &sampleRate,
+////            sampleRateSize)
+////        println("RESULT io: \(result)")
+////        result = AudioUnitSetProperty(
+////            self.ioNode!.unit,
+////            AudioUnitPropertyID(kAudioUnitProperty_SampleRate),
+////            AudioUnitScope(kAudioUnitScope_Input),
+////            2,
+////            &sampleRate,
+////            sampleRateSize)
+////        println("RESULT io: \(result)")
+////        result = AudioUnitSetProperty(
+////            self.ioNode!.unit,
+////            AudioUnitPropertyID(kAudioUnitProperty_SampleRate),
+////            AudioUnitScope(kAudioUnitScope_Input),
+////            1,
+////            &sampleRate,
+////            sampleRateSize)
+////        println("RESULT io: \(result)")
+////        result = AudioUnitSetProperty(
+////            self.ioNode!.unit,
+////            AudioUnitPropertyID(kAudioUnitProperty_SampleRate),
+////            AudioUnitScope(kAudioUnitScope_Output),
+////            0,
+////            &sampleRate,
+////            sampleRateSize)
+////        println("RESULT samp: \(result)")
+//        
+//        
+//        
+//        
+//        
+//        CAShow(UnsafeMutablePointer<Void>(self.graph!))
+//    }
     
     private func setGraph(graph: AUGraph) {
         self.graph = graph
@@ -200,6 +299,7 @@ class MusicGraph {
             println("Failed to create new graph")
             return nil
         }
+        println("New graph created")
         return graph
     }
     
@@ -210,18 +310,22 @@ class MusicGraph {
             println("Could not add node to graph")
             return nil
         }
+        println("New node added")
         return node;
     }
     
-    func addInstrument(name: String, bus: UInt32, track: MusicTrack) {
-        var node = addSamplerNode(name, bus: bus)
-        connectNodes(node.data, sourceOutputNumber: node.bus, destNode: self.ioNode!.data, destOutputNumber: self.ioNode!.bus)
-        addSoundFontToAudioUnit(UInt8(soundfontPresets[node.name]!), unit: node.unit)
-        MusicTrackSetDestNode(track, node.data)
-    }
+//    func addInstrument(name: String, bus: UInt32, track: MusicTrack) {
+//        println("Adding Instrument...")
+//        var node = addSamplerNode(name)
+//        connectNodes(node.data, sourceOutputNumber: node.bus, destNode: self.ioNode!.data, destOutputNumber: bus)
+//        addSoundFontToAudioUnit(UInt8(soundfontPresets[node.name]!), unit: node.unit)
+//        MusicTrackSetDestNode(track, node.data)
+//        println("Instrument added.")
+//    }
     
     // Adds a Sampler node to the AUGraph
-    private func addSamplerNode(name: String, bus: UInt32) -> Node {
+    private func addSamplerNode(name: String) -> Node {
+        println("Adding sampler node")
         var componentDesc = AudioComponentDescription(
             componentType: OSType(kAudioUnitType_MusicDevice),
             componentSubType: OSType(kAudioUnitSubType_Sampler),
@@ -243,9 +347,10 @@ class MusicGraph {
         } else if n == "Drums" {
             n = "SynthTom"
         }
-        var samplerNode = Node(name: n, bus: bus, data: samplerNodeData, unit: samplerNodeUnit)
+        var samplerNode = Node(name: n, data: samplerNodeData, unit: samplerNodeUnit)
         
         self.samplerNodes.append(samplerNode)
+        println("Sampler node added")
         return samplerNode
     }
     
@@ -254,8 +359,9 @@ class MusicGraph {
         return self.samplerNodes
     }
     
-    // Adds an IO node to the AUGraph
-    private func setIONode(name: String, bus: UInt32) {
+    // TODO overwrite current IO node?
+    private func addIONode() -> Node {
+        println("Adding IO node")
         var componentDesc = AudioComponentDescription(
             componentType: OSType(kAudioUnitType_Output),
             componentSubType: OSType(kAudioUnitSubType_RemoteIO),
@@ -268,11 +374,44 @@ class MusicGraph {
         
         var ioNodeUnit = getAudioUnit(ioNodeData)!
         
-        self.ioNode = Node(name: name, bus: bus, data: ioNodeData, unit: ioNodeUnit)
+        println("IO node added")
+        return Node(name: "IO", data: ioNodeData, unit: ioNodeUnit)
+    }
+    
+    // Adds an IO node to the AUGraph
+    private func setIONode(node: Node) {
+        self.ioNode = node
     }
 
     func getIONode() -> Node {
         return self.ioNode!
+    }
+    
+    // TODO overwrite current Mixer node?
+    private func addMixerNode() -> Node {
+        println("Adding Mixer Node")
+        var componentDesc = AudioComponentDescription(
+            componentType: OSType(kAudioUnitType_Mixer),
+            componentSubType: OSType(kAudioUnitSubType_MultiChannelMixer),
+            componentManufacturer: OSType(kAudioUnitManufacturer_Apple),
+            componentFlags: 0,
+            componentFlagsMask: 0)
+        
+        var mixerNodeData = AUNode()
+        addNode(&componentDesc, node: &mixerNodeData)
+        
+        var mixerNodeUnit = getAudioUnit(mixerNodeData)!
+        
+        println("Mixer node added")
+        return Node(name: "Mixer", data: mixerNodeData, unit: mixerNodeUnit)
+    }
+    
+    private func setMixerNode(node: Node) {
+        self.mixerNode = node
+    }
+    
+    func getMixerNode() -> Node {
+        return self.mixerNode!
     }
 
     // Get the AudioUnit from the Node
@@ -283,16 +422,19 @@ class MusicGraph {
             println("Could not get audio unit")
             return nil
         }
+        println("Audio unit retrieved")
         return audioUnit
     }
     
     // Connect two AUNodes
     func connectNodes(sourceNode: AUNode, sourceOutputNumber: UInt32, destNode: AUNode, destOutputNumber: UInt32) -> Bool {
         let status = AUGraphConnectNodeInput(self.graph!, sourceNode, sourceOutputNumber, destNode, destOutputNumber)
+        println("Connecting src \(sourceOutputNumber) to dest \(destOutputNumber). status: \(status)")
         if status != noErr {
             println("Could not connect nodes")
             return false
         }
+        println("Nodes connected")
         return true
     }
     
@@ -304,6 +446,7 @@ class MusicGraph {
             println("Could not open graph")
             return false
         }
+        println("Graph opened")
         return true
     }
     
@@ -317,8 +460,10 @@ class MusicGraph {
                 println("Could not start graph")
                 return false
             }
+            println("Graph started")
             return true
         }
+        println("Graph already started")
         return true
     }
     
@@ -331,8 +476,10 @@ class MusicGraph {
                 println("Could not initalize graph")
                 return false
             }
+            println("Graph initialized")
             return true
         }
+        println("Graph already initialized")
         return false
     }
     
@@ -381,8 +528,11 @@ class MusicGraph {
                 println("Could not add sound font")
                 return false
             }
+            
+            println("Sound font preset \(preset) added to \(unit.debugDescription)")
             return true
         }
+        println("Unable to get sound font URL")
         return false
     }
     
