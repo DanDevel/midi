@@ -42,10 +42,10 @@ class ViewController: UIViewController {
         if let sequence = sequence {
             
             // transpose track
-            let transposedTrack = TransposeTrack(sequence, UInt32(stpTrack.value), Int8(stpTranspose.value))
+            TransposeTrack(sequence, UInt32(stpTrack.value), Int8(stpTranspose.value))
             
             // print transposed track
-            CAShow(UnsafeMutablePointer<MusicTrack>(transposedTrack!))
+            CAShow(UnsafeMutablePointer<MusicTrack>(SequenceGetTrackByIndex(sequence, UInt32(stpTrack.value))!))
         }
     }
     
