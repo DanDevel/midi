@@ -6,31 +6,30 @@
 //
 //
 
-import UIKit
 import XCTest
+import AudioToolbox
 
 class MIDITests: XCTestCase {
     
+    var sequence: MusicSequence?
+    var iterator: MusicEventIterator?
+    var event: IteratorEvent?
+    
     override func setUp() {
         super.setUp()
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+        let fileURL = NSBundle.mainBundle().URLForResource("bossanuevewext", withExtension: "mid")
+        sequence = SequenceLoadFromFile(fileURL)
+        let track1 = SequenceGetTrackByIndex(sequence!, 1)!
+        iterator = NewIterator(track1)
+        event = IteratorGetCurrentEvent(iterator!)
     }
     
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-        super.tearDown()
-    }
-    
-    func testExample() {
-        // This is an example of a functional test case.
-        XCTAssert(true, "Pass")
-    }
-    
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measureBlock() {
-            // Put the code you want to measure the time of here.
-        }
+    func testEventToNote() {
+        XCTAssert(EventToNote(event!)!.note == EventToNote(event!)!.note, "Notes should be equal")
+        println(EventToNote(event!)!.note)
+        println(EventToNote(NoteToEvent(EventToNote(event!)!))!.note)
+        println(EventToNote(NoteToEvent(EventToNote(NoteToEvent(EventToNote(event!)!))!))!.note)
+        XCTAssert(EventToNote(event!)!.note == EventToNote(NoteToEvent(EventToNote(event!)!))!.note, "conversions mess stuff up..")
     }
     
 }
