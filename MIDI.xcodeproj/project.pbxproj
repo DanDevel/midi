@@ -10,6 +10,8 @@
 		3F08C3341B0CBEAA0067AADE /* MusicGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F08C3331B0CBEAA0067AADE /* MusicGraph.swift */; };
 		3F3412B51AD2DD52009C3A46 /* AUGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F3412B41AD2DD52009C3A46 /* AUGraph.swift */; };
 		3F3412B61AD2DD52009C3A46 /* AUGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F3412B41AD2DD52009C3A46 /* AUGraph.swift */; };
+		3F416FF31B1E6D54007EDA97 /* MusicGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F08C3331B0CBEAA0067AADE /* MusicGraph.swift */; };
+		3F416FF51B1E7E1E007EDA97 /* SequenceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F416FF41B1E7E1E007EDA97 /* SequenceTests.swift */; };
 		3F5C57C61AC46B3100D9DF44 /* MusicPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5C57C51AC46B3100D9DF44 /* MusicPlayer.swift */; };
 		3F5C57C71AC46B3100D9DF44 /* MusicPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5C57C51AC46B3100D9DF44 /* MusicPlayer.swift */; };
 		3F73E4EC1AA7977B00FE14A6 /* bossanuevewext.mid in Resources */ = {isa = PBXBuildFile; fileRef = 3F73E4EB1AA7977B00FE14A6 /* bossanuevewext.mid */; };
@@ -46,6 +48,7 @@
 /* Begin PBXFileReference section */
 		3F08C3331B0CBEAA0067AADE /* MusicGraph.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MusicGraph.swift; sourceTree = "<group>"; };
 		3F3412B41AD2DD52009C3A46 /* AUGraph.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AUGraph.swift; sourceTree = "<group>"; };
+		3F416FF41B1E7E1E007EDA97 /* SequenceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SequenceTests.swift; sourceTree = "<group>"; };
 		3F5C57C51AC46B3100D9DF44 /* MusicPlayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MusicPlayer.swift; sourceTree = "<group>"; };
 		3F73E4EB1AA7977B00FE14A6 /* bossanuevewext.mid */ = {isa = PBXFileReference; lastKnownFileType = audio.midi; path = bossanuevewext.mid; sourceTree = "<group>"; };
 		3F73E4F11AA7A4FF00FE14A6 /* MusicSequenceTransposer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MusicSequenceTransposer.swift; sourceTree = "<group>"; };
@@ -140,6 +143,7 @@
 		3FCF2B791A9E593600B3E309 /* MIDITests */ = {
 			isa = PBXGroup;
 			children = (
+				3F416FF41B1E7E1E007EDA97 /* SequenceTests.swift */,
 				3FCF2B7C1A9E593600B3E309 /* MIDITests.swift */,
 				3FCF2B7A1A9E593600B3E309 /* Supporting Files */,
 			);
@@ -280,7 +284,9 @@
 				3F5C57C71AC46B3100D9DF44 /* MusicPlayer.swift in Sources */,
 				3F3412B61AD2DD52009C3A46 /* AUGraph.swift in Sources */,
 				3FCF2B7D1A9E593600B3E309 /* MIDITests.swift in Sources */,
+				3F416FF51B1E7E1E007EDA97 /* SequenceTests.swift in Sources */,
 				3F73E4F31AA7A4FF00FE14A6 /* MusicSequenceTransposer.swift in Sources */,
+				3F416FF31B1E6D54007EDA97 /* MusicGraph.swift in Sources */,
 				3F73E4F61AA7A75500FE14A6 /* MusicEventIterator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

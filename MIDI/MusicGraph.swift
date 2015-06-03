@@ -222,6 +222,14 @@ class MusicGraph {
         track = SequenceGetTrackByIndex(sequence, 2)!
         TrackSetDestNode(track, samplerNodes[2].data)
         
+        
+        
+        var t = SequenceGetLastTrack(sequence)!
+        var iterator = NewIterator(t)!
+        var events = IteratorGetMetaEvents(iterator)
+        for var i = 1; i < events.count; i+=2 {
+            MetaEventGetContent(events[i])
+        }
     }
     
 //    init(sequence: MusicSequence) {
@@ -342,10 +350,12 @@ class MusicGraph {
         var n = name
         if n == "Piano" {
             n = "Acoustic Grand Piano"
+            n = "GunShot"
         } else if n == "Bass" {
             n = "JazzBass"
+            n = "GunShot"
         } else if n == "Drums" {
-            n = "SynthTom"
+            n = "Acoustic Grand Piano"
         }
         var samplerNode = Node(name: n, data: samplerNodeData, unit: samplerNodeUnit)
         
@@ -509,10 +519,12 @@ class MusicGraph {
     // Add Sound Font to Audio Unit
     private func addSoundFontToAudioUnit(preset: UInt8, unit: AudioUnit) -> Bool {
         if let url = NSBundle.mainBundle().URLForResource(self.soundfontFile, withExtension: "sf2") {
+            
             var instrumentData = AUSamplerInstrumentData(
                 fileURL: Unmanaged.passUnretained(url),
                 instrumentType: UInt8(kInstrumentType_DLSPreset),
-                bankMSB: UInt8(kAUSampler_DefaultMelodicBankMSB),
+//                bankMSB: UInt8(kAUSampler_DefaultMelodicBankMSB),
+                bankMSB: UInt8(kAUSampler_DefaultPercussionBankMSB),
                 bankLSB: UInt8(kAUSampler_DefaultBankLSB),
                 presetID: preset)
             
