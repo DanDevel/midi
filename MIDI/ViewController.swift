@@ -22,22 +22,40 @@ class ViewController: UIViewController {
     @IBOutlet var btnResetSequence: UIButton!
     @IBOutlet var btnTransposeSequence: UIButton!
     @IBOutlet var btnPlaySequence: UIButton!
+    @IBOutlet var btnTrackInfo: UIButton!
+    
     @IBOutlet var stpTrack: UIStepper!
     @IBOutlet var stpTranspose: UIStepper!
+    
     @IBOutlet var lblTrack: UITextField!
     @IBOutlet var lblTranspose: UITextField!
     
     
+    @IBAction func printTrackInfo(sender: AnyObject) {
+        ENTRY_LOG()
+//        var iterator = NewIterator(SequenceGetTrackByIndex(sequence!, UInt32(stpTrack.value))!)!
+//        IteratorFor(iterator, EventPrint)
+        
+        var track = SequenceGetTrackByIndex(sequence!, UInt32(stpTrack.value))!
+        CAShow(UnsafeMutablePointer<MusicTrack>(track))
+        EXIT_LOG()
+    }
+    
     @IBAction func updateTrack(sender: AnyObject) {
+        ENTRY_LOG()
         lblTrack.text = String(UInt32(stpTrack.value))
+        EXIT_LOG()
     }
     
     @IBAction func updateTranspose(sender: AnyObject) {
+        ENTRY_LOG()
         lblTranspose.text = String(Int8(stpTranspose.value))
+        EXIT_LOG()
     }
     
     //TODO have sequence reference the new transposition
     @IBAction func transposeSequence(sender: AnyObject) {
+        ENTRY_LOG()
         // get the sequence
         if let sequence = sequence {
             
@@ -47,9 +65,11 @@ class ViewController: UIViewController {
             // print transposed track
             CAShow(UnsafeMutablePointer<MusicTrack>(SequenceGetTrackByIndex(sequence, UInt32(stpTrack.value))!))
         }
+        EXIT_LOG()
     }
     
     @IBAction func resetSequence(sender: AnyObject) {
+        ENTRY_LOG()
         // get the player
         if let player = player {
             
@@ -61,11 +81,13 @@ class ViewController: UIViewController {
             
             // reset the player
             PlayerResetTime(player)
-            println("RESET")
+            log.info("Player Reset")
         }
+        EXIT_LOG()
     }
     
     @IBAction func playSequence(sender: AnyObject) {
+        ENTRY_LOG()
         // get the player
         if let player = player {
             
@@ -74,21 +96,23 @@ class ViewController: UIViewController {
                 // start the player
                 if PlayerStart(player) {
                     btnPlaySequence.setTitle("Pause", forState: UIControlState.Normal)
-                    println("PLAY")
+                    log.info("Player Playing")
                 }
             } else {
                 
                 // pause the player
                 if PlayerStop(player) {
                     btnPlaySequence.setTitle("Play", forState: UIControlState.Normal)
-                    println("PAUSE")
+                    log.info("Player Paused")
                 }
             }
         }
+        EXIT_LOG()
     }
     
     // on load, set up sequence, graph, and player
     override func viewDidLoad() {
+        ENTRY_LOG()
         super.viewDidLoad()
         
         let fileURL = NSBundle.mainBundle().URLForResource("bossanuevewext", withExtension: "mid")
@@ -100,13 +124,13 @@ class ViewController: UIViewController {
 //            graph = NewMIDIGraph("GeneralUser GS MuseScore v1.442", sequence)
             player = NewPlayerWithSequence(sequence)
         }
+        EXIT_LOG()
     }
 
     override func didReceiveMemoryWarning() {
+        ENTRY_LOG()
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+        EXIT_LOG()
     }
-
-
 }
 

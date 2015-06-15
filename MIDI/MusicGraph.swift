@@ -15,11 +15,13 @@ class MusicGraph {
         var name: String
         var data: AUNode
         var unit: AudioUnit
+        var track: Int
         
-        init(name: String, data: AUNode, unit: AudioUnit) {
+        init(name: String, data: AUNode, unit: AudioUnit, track: Int) {
             self.name = name
             self.data = data
             self.unit = unit
+            self.track = track
         }
         
     }
@@ -30,6 +32,8 @@ class MusicGraph {
     private var samplerNodes = Array<Node>()
     private var ioNode: Node?
     private var mixerNode: Node?
+    
+    private var sequence: MusicSequence?
     
     let soundfontPresets: [String: UInt8] = [
         "Acoustic Grand Piano" : 0,
@@ -163,19 +167,23 @@ class MusicGraph {
     ]
     
     init() {
+        ENTRY_LOG()
         setGraph(newGraph()!)
         setIONode(addIONode())
         CAShow(UnsafeMutablePointer<Void>(self.graph!))
+        EXIT_LOG()
     }
     
     init(sequence: MusicSequence) {
+        ENTRY_LOG()
+        self.sequence = sequence
         setGraph(newGraph()!)
         
         open()
         
-        addSamplerNode("Piano")
-        addSamplerNode("Bass")
-        addSamplerNode("Drums")
+        addSamplerNode("Piano", trackIndex: 0)
+        addSamplerNode("Bass", trackIndex: 1)
+        addSamplerNode("Drums", trackIndex: 2)
         
         setMixerNode(addMixerNode())
         setIONode(addIONode())
@@ -190,7 +198,7 @@ class MusicGraph {
             &numBuses,
             numBusesSize)
         
-        connectNodes(samplerNodes[0].data, sourceOutputNumber: 0, destNode: mixerNode!.data, destOutputNumber: 0)
+        connectNodes(samplerNodes[0].data, sourceOutputNumber: 0, destNode: mixerNode!.data, destOutputNumber: 0) // input node instead
         connectNodes(samplerNodes[1].data, sourceOutputNumber: 0, destNode: mixerNode!.data, destOutputNumber: 1)
         connectNodes(samplerNodes[2].data, sourceOutputNumber: 0, destNode: mixerNode!.data, destOutputNumber: 2)
         
@@ -200,21 +208,12 @@ class MusicGraph {
         SequenceSetAUGraph(sequence, self.graph!)
         
         
-        var preset = soundfontPresets[samplerNodes[0].name]!
-        var unit = samplerNodes[0].unit
-        addSoundFontToAudioUnit(preset, unit: unit)
-        
-        preset = soundfontPresets[samplerNodes[1].name]!
-        unit = samplerNodes[1].unit
-        addSoundFontToAudioUnit(preset, unit: unit)
-        
-        preset = soundfontPresets[samplerNodes[2].name]!
-        unit = samplerNodes[2].unit
-        addSoundFontToAudioUnit(preset, unit: unit)
-        
+        addSoundFontToNode(samplerNodes[0])
+        addSoundFontToNode(samplerNodes[1])
+        addSoundFontToNode(samplerNodes[2])
         
         var track = SequenceGetTrackByIndex(sequence, 0)!
-        TrackSetDestNode(track, samplerNodes[0].data)
+        TrackSetDestNode(track, samplerNodes[0].data)  // input Node instead
         
         track = SequenceGetTrackByIndex(sequence, 1)!
         TrackSetDestNode(track, samplerNodes[1].data)
@@ -230,6 +229,7 @@ class MusicGraph {
         for var i = 1; i < events.count; i+=2 {
             MetaEventGetContent(events[i])
         }
+        EXIT_LOG()
     }
     
 //    init(sequence: MusicSequence) {
@@ -263,7 +263,7 @@ class MusicGraph {
 ////            0,
 ////            &sampleRate,
 ////            sampleRateSize)
-////        println("RESULT io: \(result)")
+////        log.debug("RESULT io: \(result)")
 ////        result = AudioUnitSetProperty(
 ////            self.ioNode!.unit,
 ////            AudioUnitPropertyID(kAudioUnitProperty_SampleRate),
@@ -271,7 +271,7 @@ class MusicGraph {
 ////            2,
 ////            &sampleRate,
 ////            sampleRateSize)
-////        println("RESULT io: \(result)")
+////        log.debug("RESULT io: \(result)")
 ////        result = AudioUnitSetProperty(
 ////            self.ioNode!.unit,
 ////            AudioUnitPropertyID(kAudioUnitProperty_SampleRate),
@@ -279,7 +279,7 @@ class MusicGraph {
 ////            1,
 ////            &sampleRate,
 ////            sampleRateSize)
-////        println("RESULT io: \(result)")
+////        log.debug("RESULT io: \(result)")
 ////        result = AudioUnitSetProperty(
 ////            self.ioNode!.unit,
 ////            AudioUnitPropertyID(kAudioUnitProperty_SampleRate),
@@ -287,7 +287,7 @@ class MusicGraph {
 ////            0,
 ////            &sampleRate,
 ////            sampleRateSize)
-////        println("RESULT samp: \(result)")
+////        log.debug("RESULT samp: \(result)")
 //        
 //        
 //        
@@ -297,43 +297,52 @@ class MusicGraph {
 //    }
     
     private func setGraph(graph: AUGraph) {
+        ENTRY_LOG()
+        EXIT_LOG()
         self.graph = graph
     }
     
     private func newGraph() -> AUGraph? {
+        ENTRY_LOG()
         var graph = AUGraph()
         let status = NewAUGraph(&graph)
         if status != noErr {
-            println("Failed to create new graph")
+            log.error("Failed to create new graph")
+            EXIT_LOG()
             return nil
         }
-        println("New graph created")
+        log.info("New graph created")
+        EXIT_LOG()
         return graph
     }
     
     // Returns the added node
     private func addNode(inout componentDesc: AudioComponentDescription, inout node: AUNode) -> AUNode? {
+        ENTRY_LOG()
         let status = AUGraphAddNode(self.graph!, &componentDesc, &node)
         if status != noErr {
-            println("Could not add node to graph")
+            log.error("Could not add node to graph")
+            EXIT_LOG()
             return nil
         }
-        println("New node added")
-        return node;
+        log.info("New node added")
+        EXIT_LOG()
+        return node
     }
     
 //    func addInstrument(name: String, bus: UInt32, track: MusicTrack) {
-//        println("Adding Instrument...")
+//        log.error("Adding Instrument...")
 //        var node = addSamplerNode(name)
 //        connectNodes(node.data, sourceOutputNumber: node.bus, destNode: self.ioNode!.data, destOutputNumber: bus)
 //        addSoundFontToAudioUnit(UInt8(soundfontPresets[node.name]!), unit: node.unit)
 //        MusicTrackSetDestNode(track, node.data)
-//        println("Instrument added.")
+//        log.error("Instrument added.")
 //    }
     
     // Adds a Sampler node to the AUGraph
-    private func addSamplerNode(name: String) -> Node {
-        println("Adding sampler node")
+    private func addSamplerNode(name: String, trackIndex: Int) -> Node {
+        ENTRY_LOG()
+        log.info("Adding sampler node")
         var componentDesc = AudioComponentDescription(
             componentType: OSType(kAudioUnitType_MusicDevice),
             componentSubType: OSType(kAudioUnitSubType_Sampler),
@@ -350,28 +359,36 @@ class MusicGraph {
         var n = name
         if n == "Piano" {
             n = "Acoustic Grand Piano"
-            n = "GunShot"
         } else if n == "Bass" {
             n = "JazzBass"
-            n = "GunShot"
         } else if n == "Drums" {
             n = "Acoustic Grand Piano"
         }
-        var samplerNode = Node(name: n, data: samplerNodeData, unit: samplerNodeUnit)
+        
+        log.debug("NAME: \(name)")
+        log.debug("INSTRUMENT TYPE: \(n)")
+        log.debug("TRACK: \(trackIndex)")
+        log.debug("NODE: \(samplerNodeData.description)")
+        
+        var samplerNode = Node(name: n, data: samplerNodeData, unit: samplerNodeUnit, track: trackIndex)
         
         self.samplerNodes.append(samplerNode)
-        println("Sampler node added")
+        log.info("Sampler node added")
+        EXIT_LOG()
         return samplerNode
     }
     
     // Get a node by index from the AUGraph
     func getSamplerNodes() -> Array<Node> {
+        ENTRY_LOG()
+        EXIT_LOG()
         return self.samplerNodes
     }
     
     // TODO overwrite current IO node?
     private func addIONode() -> Node {
-        println("Adding IO node")
+        ENTRY_LOG()
+        log.info("Adding IO node")
         var componentDesc = AudioComponentDescription(
             componentType: OSType(kAudioUnitType_Output),
             componentSubType: OSType(kAudioUnitSubType_RemoteIO),
@@ -384,22 +401,28 @@ class MusicGraph {
         
         var ioNodeUnit = getAudioUnit(ioNodeData)!
         
-        println("IO node added")
-        return Node(name: "IO", data: ioNodeData, unit: ioNodeUnit)
+        log.info("IO node added")
+        EXIT_LOG()
+        return Node(name: "IO", data: ioNodeData, unit: ioNodeUnit, track: -1)
     }
     
     // Adds an IO node to the AUGraph
     private func setIONode(node: Node) {
+        ENTRY_LOG()
+        EXIT_LOG()
         self.ioNode = node
     }
 
     func getIONode() -> Node {
+        ENTRY_LOG()
+        EXIT_LOG()
         return self.ioNode!
     }
     
     // TODO overwrite current Mixer node?
     private func addMixerNode() -> Node {
-        println("Adding Mixer Node")
+        ENTRY_LOG()
+        log.info("Adding Mixer Node")
         var componentDesc = AudioComponentDescription(
             componentType: OSType(kAudioUnitType_Mixer),
             componentSubType: OSType(kAudioUnitSubType_MultiChannelMixer),
@@ -412,119 +435,155 @@ class MusicGraph {
         
         var mixerNodeUnit = getAudioUnit(mixerNodeData)!
         
-        println("Mixer node added")
-        return Node(name: "Mixer", data: mixerNodeData, unit: mixerNodeUnit)
+        log.info("Mixer node added")
+        EXIT_LOG()
+        return Node(name: "Mixer", data: mixerNodeData, unit: mixerNodeUnit, track: -1)
     }
     
     private func setMixerNode(node: Node) {
+        ENTRY_LOG()
+        EXIT_LOG()
         self.mixerNode = node
     }
     
     func getMixerNode() -> Node {
+        ENTRY_LOG()
+        EXIT_LOG()
         return self.mixerNode!
     }
 
     // Get the AudioUnit from the Node
     func getAudioUnit(node: AUNode) -> AudioUnit? {
+        ENTRY_LOG()
         var audioUnit = AudioUnit()
         let status = AUGraphNodeInfo(self.graph!, node, nil, &audioUnit)
         if status != noErr {
-            println("Could not get audio unit")
+            log.error("Could not get audio unit")
+            EXIT_LOG()
             return nil
         }
-        println("Audio unit retrieved")
+        log.info("Audio unit retrieved")
+        EXIT_LOG()
         return audioUnit
     }
     
     // Connect two AUNodes
     func connectNodes(sourceNode: AUNode, sourceOutputNumber: UInt32, destNode: AUNode, destOutputNumber: UInt32) -> Bool {
+        ENTRY_LOG()
         let status = AUGraphConnectNodeInput(self.graph!, sourceNode, sourceOutputNumber, destNode, destOutputNumber)
-        println("Connecting src \(sourceOutputNumber) to dest \(destOutputNumber). status: \(status)")
+        log.debug("Connecting src \(sourceOutputNumber) to dest \(destOutputNumber). status: \(status)")
         if status != noErr {
-            println("Could not connect nodes")
+            log.error("Could not connect nodes")
+            EXIT_LOG()
             return false
         }
-        println("Nodes connected")
+        log.info("Nodes connected")
+        EXIT_LOG()
         return true
     }
     
     // Open the Graph
     // Fix Implementation -> should there be a return value?
     func open() -> Bool {
+        ENTRY_LOG()
         let status = AUGraphOpen(self.graph!)
         if status != noErr {
-            println("Could not open graph")
+            log.error("Could not open graph")
+            EXIT_LOG()
             return false
         }
-        println("Graph opened")
+        log.info("Graph opened")
+        EXIT_LOG()
         return true
     }
     
     // Start the Graph
     // Fix Implementation -> should there be a return value?
     func start() -> Bool {
+        ENTRY_LOG()
         initialize()
         if !isRunning() {
             let status = AUGraphStart(self.graph!)
             if status != noErr {
-                println("Could not start graph")
+                log.error("Could not start graph")
+                EXIT_LOG()
                 return false
             }
-            println("Graph started")
+            log.info("Graph started")
+            EXIT_LOG()
             return true
         }
-        println("Graph already started")
+        log.warning("Graph already started")
+        EXIT_LOG()
         return true
     }
     
     // Initialize the Graph
     // Fix Implementation -> should there be a return value?
     func initialize() -> Bool {
+        ENTRY_LOG()
         if !isInitalized() {
             let status = AUGraphInitialize(self.graph!)
             if status != noErr {
-                println("Could not initalize graph")
+                log.error("Could not initalize graph")
+                EXIT_LOG()
                 return false
             }
-            println("Graph initialized")
+            log.info("Graph initialized")
+            EXIT_LOG()
             return true
         }
-        println("Graph already initialized")
+        log.warning("Graph already initialized")
+        EXIT_LOG()
         return false
     }
     
     // Check if the graph is initalize
     func isInitalized() -> Bool {
+        ENTRY_LOG()
         var isInitialized = Boolean()
         let status = AUGraphIsInitialized(self.graph!, &isInitialized)
         if status != noErr {
-            println("Could not check if graph was initialized")
+            log.error("Could not check if graph was initialized")
+            EXIT_LOG()
             return false
         }
+        EXIT_LOG()
         return isInitialized != 0
     }
     
     // Check if the graph is running
     func isRunning() -> Bool {
+        ENTRY_LOG()
         var isRunning = Boolean()
         let status = AUGraphIsRunning(self.graph!, &isRunning)
         if status != noErr {
-            println("Could not check is graph was running")
+            log.error("Could not check is graph was running")
+            EXIT_LOG()
             return false
         }
+        EXIT_LOG()
         return isRunning != 0
     }
     
     // TODO: add preset param
     // Add Sound Font to Audio Unit
-    private func addSoundFontToAudioUnit(preset: UInt8, unit: AudioUnit) -> Bool {
+    private func addSoundFontToNode(node: Node) -> Bool {
+        ENTRY_LOG()
+        let preset = soundfontPresets[node.name]!
+        let unit = node.unit
+        var bank = UInt8(kAUSampler_DefaultMelodicBankMSB)
+        if TrackIsDrum(SequenceGetTrackByIndex(self.sequence!, UInt32(node.track))!) {
+            bank = UInt8(kAUSampler_DefaultPercussionBankMSB)
+        }
+        log.debug("Soundbank \(bank)")
         if let url = NSBundle.mainBundle().URLForResource(self.soundfontFile, withExtension: "sf2") {
+            
             
             var instrumentData = AUSamplerInstrumentData(
                 fileURL: Unmanaged.passUnretained(url),
                 instrumentType: UInt8(kInstrumentType_DLSPreset),
-//                bankMSB: UInt8(kAUSampler_DefaultMelodicBankMSB),
-                bankMSB: UInt8(kAUSampler_DefaultPercussionBankMSB),
+                bankMSB: bank,
                 bankLSB: UInt8(kAUSampler_DefaultBankLSB),
                 presetID: preset)
             
@@ -537,14 +596,17 @@ class MusicGraph {
                 UInt32(sizeof(AUSamplerInstrumentData)))
             
             if status != noErr {
-                println("Could not add sound font")
+                log.error("Could not add sound font")
+                EXIT_LOG()
                 return false
             }
             
-            println("Sound font preset \(preset) added to \(unit.debugDescription)")
+            log.debug("Sound font preset \(preset) added to \(unit.debugDescription)")
+            EXIT_LOG()
             return true
         }
-        println("Unable to get sound font URL")
+        log.error("Unable to get sound font URL")
+        EXIT_LOG()
         return false
     }
     

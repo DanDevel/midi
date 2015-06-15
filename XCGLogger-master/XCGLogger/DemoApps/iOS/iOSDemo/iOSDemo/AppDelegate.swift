@@ -1,24 +1,41 @@
 //
 //  AppDelegate.swift
-//  MIDI
+//  XCGLogger: https://github.com/DaveWoodCom/XCGLogger
 //
-//  Created by Student on 2/25/15.
-//
+//  Created by Dave Wood on 2014-06-06.
+//  Copyright (c) 2014 Dave Wood, Cerebral Gardens.
+//  Some rights reserved: https://github.com/DaveWoodCom/XCGLogger/blob/master/LICENSE.txt
 //
 
 import UIKit
+import XCGLogger
 
 let log = XCGLogger.defaultInstance()
-let FUNCTION_LOGGING = false
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
+    // MARK: - Properties
     var window: UIWindow?
 
+    var documentsDirectory: NSURL {
+        let urls = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)
+        return urls[urls.endIndex-1] as! NSURL
+    }
 
-    func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-        log.setup(logLevel: .Debug, showLogLevel: true, showFileNames: true, showLineNumbers: true, writeToFile: nil)
+    var cacheDirectory: NSURL {
+        let urls = NSFileManager.defaultManager().URLsForDirectory(.CachesDirectory, inDomains: .UserDomainMask)
+        return urls[urls.endIndex-1] as! NSURL
+    }
+
+    // MARK: - Life cycle methods
+    func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject : AnyObject]?) -> Bool {
+        // Override point for customization after application launch.
+
+        // Setup XCGLogger
+        let logPath : NSURL = self.cacheDirectory.URLByAppendingPathComponent("XCGLogger_Log.txt")
+        log.setup(logLevel: .Debug, showThreadName: true, showLogLevel: true, showFileNames: true, showLineNumbers: true, writeToFile: logPath)
+
         return true
     }
 
@@ -43,7 +60,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillTerminate(application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
-
-
 }
 
+func noop() {
+    // Global no operation function, useful for doing nothing in a switch option, and examples
+}

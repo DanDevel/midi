@@ -192,7 +192,7 @@ func NewGraph() -> AUGraph? {
     var graph = AUGraph()
     let status = NewAUGraph(&graph)
     if status != noErr {
-        println("Failed to create new graph")
+        log.error("Failed to create new graph")
         return nil
     }
     return graph
@@ -202,7 +202,7 @@ func NewGraph() -> AUGraph? {
 func GraphAddNode(graph: AUGraph, inout componentDesc: AudioComponentDescription, inout node: AUNode) -> AUNode? {
     let status = AUGraphAddNode(graph, &componentDesc, &node)
     if status != noErr {
-        println("Could not add node to graph")
+        log.error("Could not add node to graph")
         return nil
     }
     return node;
@@ -239,7 +239,7 @@ func GraphGetNode(graph: AUGraph, index: UInt32) -> AUNode? {
     var node = AUNode()
     let status = AUGraphGetIndNode(graph, index, &node)
     if status != noErr {
-        println("Failed to get node")
+        log.error("Failed to get node")
         return nil
     }
     return node
@@ -250,7 +250,7 @@ func GraphGetAudioUnit(graph: AUGraph, node: AUNode) -> AudioUnit? {
     var audioUnit = AudioUnit()
     let status = AUGraphNodeInfo(graph, node, nil, &audioUnit)
     if status != noErr {
-        println("Could not get audio unit")
+        log.error("Could not get audio unit")
         return nil
     }
     return audioUnit
@@ -260,7 +260,7 @@ func GraphGetAudioUnit(graph: AUGraph, node: AUNode) -> AudioUnit? {
 func GraphConnectNodes(graph: AUGraph, sourceNode: AUNode, sourceOutputNumber: UInt32, destNode: AUNode, destOutputNumber: UInt32) -> Bool {
     let status = AUGraphConnectNodeInput(graph, sourceNode, sourceOutputNumber, destNode, destOutputNumber)
     if status != noErr {
-        println("Could not connect nodes")
+        log.error("Could not connect nodes")
         return false
     }
     return true
@@ -270,7 +270,7 @@ func GraphConnectNodes(graph: AUGraph, sourceNode: AUNode, sourceOutputNumber: U
 func GraphOpen(graph: AUGraph) -> Bool {
     let status = AUGraphOpen(graph)
     if status != noErr {
-        println("Could not open graph")
+        log.error("Could not open graph")
         return false
     }
     return true
@@ -283,7 +283,7 @@ func GraphStart(graph: AUGraph) -> Bool {
     if !GraphIsRunning(graph) {
         let status = AUGraphStart(graph)
         if status != noErr {
-            println("Could not start graph")
+            log.error("Could not start graph")
             return false
         }
         return true
@@ -297,7 +297,7 @@ func GraphInitialize(graph: AUGraph) -> Bool {
     if !GraphIsInitalized(graph) {
         let status = AUGraphInitialize(graph)
         if status != noErr {
-            println("Could not initalize graph")
+            log.error("Could not initalize graph")
             return false
         }
         return true
@@ -310,7 +310,7 @@ func GraphIsInitalized(graph: AUGraph) -> Bool {
     var isInitialized = Boolean()
     let status = AUGraphIsInitialized(graph, &isInitialized)
     if status != noErr {
-        println("Could not check if graph was initialized")
+        log.error("Could not check if graph was initialized")
         return false
     }
     return isInitialized != 0
@@ -321,7 +321,7 @@ func GraphIsRunning(graph: AUGraph) -> Bool {
     var isRunning = Boolean()
     let status = AUGraphIsRunning(graph, &isRunning)
     if status != noErr {
-        println("Could not check is graph was running")
+        log.error("Could not check is graph was running")
         return false
     }
     return isRunning != 0
@@ -347,7 +347,7 @@ func GraphAddSoundFontToAudioUnit(filename: String, preset: UInt8, unit: AudioUn
             UInt32(sizeof(AUSamplerInstrumentData)))
         
         if status != noErr {
-            println("Could not add sound font")
+            log.error("Could not add sound font")
             return false
         }
         return true

@@ -26,9 +26,6 @@ class MIDITests: XCTestCase {
     
     func testEventToNote() {
         XCTAssert(EventToNote(event!)!.note == EventToNote(event!)!.note, "Notes should be equal")
-        println(EventToNote(event!)!.note)
-        println(EventToNote(NoteToEvent(EventToNote(event!)!))!.note)
-        println(EventToNote(NoteToEvent(EventToNote(NoteToEvent(EventToNote(event!)!))!))!.note)
         XCTAssert(EventToNote(event!)!.note == EventToNote(NoteToEvent(EventToNote(event!)!))!.note, "conversions mess stuff up..")
     }
     

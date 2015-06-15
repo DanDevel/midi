@@ -10,61 +10,72 @@ import AudioToolbox
 
 
 func NewIterator(track: MusicTrack) -> MusicEventIterator? {
+    ENTRY_LOG()
     var iterator = MusicEventIterator()
     let status = NewMusicEventIterator(track, &iterator)
     
     if status != noErr {
-        println("Failed to create new iterator")
+        log.error("Failed to create new iterator")
+        EXIT_LOG()
         return nil
     }
-    
+    EXIT_LOG()
     return iterator
 }
 
 func IteratorHasNextEvent(iterator: MusicEventIterator) -> Bool {
+    ENTRY_LOG()
     var hasNext = Boolean()
     let status = MusicEventIteratorHasNextEvent(iterator, &hasNext)
     
     if status != noErr {
-        println("Could not check for next event.")
+        log.error("Could not check for next event.")
+        EXIT_LOG()
         return false
     }
-    
+    EXIT_LOG()
     return hasNext != 0
 }
 
 func IteratorHasCurrentEvent(iterator: MusicEventIterator) -> Bool {
+    ENTRY_LOG()
     var hasCurrent = Boolean()
     let status = MusicEventIteratorHasCurrentEvent(iterator, &hasCurrent)
     
     if status != noErr {
-        println("Could not check for next event.")
+        log.error("Could not check for next event.")
+        EXIT_LOG()
         return false
     }
-    
+    EXIT_LOG()
     return hasCurrent != 0
 }
 
 func IteratorToNextEvent(iterator: MusicEventIterator) -> Bool {
+    ENTRY_LOG()
     if !IteratorHasNextEvent(iterator) {
+        EXIT_LOG()
         return false
     }
     
     let status = MusicEventIteratorNextEvent(iterator)
     
     if status != noErr {
-        println("Failed to get Next Event")
+        log.error("Failed to get Next Event")
+        EXIT_LOG()
         return false
     }
-    
+    EXIT_LOG()
     return true
 }
 
 func IteratorReset(iterator: MusicEventIterator) {
+    ENTRY_LOG()
     let status = MusicEventIteratorSeek(iterator, MusicTimeStamp(0))
     if status != noErr {
-        println("Failed to Reset Iterator")
+        log.error("Failed to Reset Iterator")
     }
+    EXIT_LOG()
 }
 
 struct IteratorEvent {
@@ -76,59 +87,75 @@ struct IteratorEvent {
 
 // DEPRECATE THIS
 func IteratorGetCurrentNoteEvent(iterator: MusicEventIterator) -> MIDINoteMessage? {
+    ENTRY_LOG()
     let event = IteratorGetCurrentEvent(iterator)
     
     if let event = event {
         if event.type != MusicEventType(kMusicEventType_MIDINoteMessage) {
-            println("Event isn't midi")
+            log.error("Event isn't midi")
+            EXIT_LOG()
             return nil
         }
         
         let data = UnsafePointer<MIDINoteMessage>(event.data)
+        EXIT_LOG()
         return data.memory
     }
-    
+    EXIT_LOG()
     return nil
 }
 
 func EventIsNote(event: IteratorEvent) -> Bool {
+    ENTRY_LOG()
+    EXIT_LOG()
     return event.type == MusicEventType(kMusicEventType_MIDINoteMessage)
 }
 
 func EventIsMeta(event: IteratorEvent) -> Bool {
+    ENTRY_LOG()
+    EXIT_LOG()
     return event.type == MusicEventType(kMusicEventType_Meta)
 }
 
 func EventToNote(event: IteratorEvent) -> MIDINoteMessage? {
+    ENTRY_LOG()
     if !EventIsNote(event) {
         return nil
     }
     let data = UnsafePointer<MIDINoteMessage>(event.data)
+    EXIT_LOG()
     return data.memory
 }
 
 func EventToMeta(event: IteratorEvent) -> MIDIMetaEvent? {
+    ENTRY_LOG()
     if !EventIsMeta(event) {
         return nil
     }
     let data = UnsafePointer<MIDIMetaEvent>(event.data)
+    EXIT_LOG()
     return data.memory
 }
 
 var n_:MIDINoteMessage = MIDINoteMessage() // ugly hack to make the pointers work.
 func NoteToEvent(note: MIDINoteMessage) -> IteratorEvent {
+    ENTRY_LOG()
     n_ = note
+    EXIT_LOG()
     return IteratorEvent(timeStamp: -1, // unused
                          type: MusicEventType(kMusicEventType_MIDINoteMessage),
                          data: &n_,
                          dataSize: 0)   // unused
 }
 
+var m_: MIDIMetaEvent = MIDIMetaEvent() // ugly hack to make pointers work.
 func MetaToEvent(meta: MIDIMetaEvent) -> IteratorEvent {
-    var m = meta
+    ENTRY_LOG()
+    m_ = meta
+    EXIT_LOG()
     return IteratorEvent(timeStamp: -1,
         type: MusicEventType(kMusicEventType_Meta),
-        data: &m,
+        data: &m_,
         dataSize: 0)
 }
 
@@ -137,7 +164,7 @@ func MetaToEvent(meta: MIDIMetaEvent) -> IteratorEvent {
 //    
 //    if let event = event {
 //        if event.type != MusicEventType(kMusicEventType_Meta) {
-//            println("Event isn't meta")
+//            log.error("Event isn't meta")
 //            return nil
 //        }
 //        let data = UnsafePointer<MIDIMetaEvent>(event.data)
@@ -149,12 +176,16 @@ func MetaToEvent(meta: MIDIMetaEvent) -> IteratorEvent {
 
 // DEPRECATE THIS
 func IteratorSetCurrentNoteEvent(iterator: MusicEventIterator, noteMessage: MIDINoteMessage) -> Bool {
+    ENTRY_LOG()
     var message: MIDINoteMessage = noteMessage
     let type = MusicEventType(kMusicEventType_MIDINoteMessage)
-    return IteratorSetCurrentEvent(iterator, IteratorEvent(timeStamp: -1, type: type, data: &message, dataSize: 0))
+    let result = IteratorSetCurrentEvent(iterator, IteratorEvent(timeStamp: -1, type: type, data: &message, dataSize: 0))
+    EXIT_LOG()
+    return result
 }
 
 func IteratorGetCurrentEvent(iterator: MusicEventIterator) -> IteratorEvent? {
+    ENTRY_LOG()
     var timeStamp = MusicTimeStamp()
     var type = MusicEventType()
     var data: UnsafePointer<()> = nil
@@ -163,24 +194,28 @@ func IteratorGetCurrentEvent(iterator: MusicEventIterator) -> IteratorEvent? {
     let status = MusicEventIteratorGetEventInfo(iterator, &timeStamp, &type, &data, &dataSize)
     
     if status != noErr {
+        EXIT_LOG()
         return nil
     }
-    
+    EXIT_LOG()
     return IteratorEvent(timeStamp: timeStamp, type: type, data: data, dataSize: dataSize)
 }
 
 func IteratorSetCurrentEvent(iterator: MusicEventIterator, event: IteratorEvent) -> Bool {
+    ENTRY_LOG()
     let status = MusicEventIteratorSetEventInfo(iterator, event.type, event.data)
     
     if status != noErr {
-        println("Could not set event info")
+        log.error("Could not set event info")
+        EXIT_LOG()
         return false
     }
-    
+    EXIT_LOG()
     return true
 }
 
 func IteratorGetEvents(iterator: MusicEventIterator) -> Array<IteratorEvent> {
+    ENTRY_LOG()
     var result = Array<IteratorEvent>()
     IteratorReset(iterator)
     var hasCurrentEvent = IteratorHasCurrentEvent(iterator)
@@ -188,11 +223,13 @@ func IteratorGetEvents(iterator: MusicEventIterator) -> Array<IteratorEvent> {
         result.append(IteratorGetCurrentEvent(iterator)!)
         hasCurrentEvent = IteratorToNextEvent(iterator)
     }
+    EXIT_LOG()
     return result
 }
 
 // Assumption: events is equal to number of events in iterator
 func IteratorSetEvents(iterator: MusicEventIterator, events: Array<IteratorEvent>) {
+    ENTRY_LOG()
     IteratorReset(iterator)
     var hasCurrentEvent = IteratorHasCurrentEvent(iterator)
     var i = 0
@@ -201,25 +238,31 @@ func IteratorSetEvents(iterator: MusicEventIterator, events: Array<IteratorEvent
         hasCurrentEvent = IteratorToNextEvent(iterator)
         i++
     }
+    EXIT_LOG()
 }
 
 func IteratorMap(iterator: MusicEventIterator, f: IteratorEvent -> IteratorEvent) {
+    ENTRY_LOG()
     IteratorReset(iterator)
     var hasCurrentEvent = IteratorHasCurrentEvent(iterator)
     while hasCurrentEvent {
         let event = IteratorGetCurrentEvent(iterator)!
-        
-        // TODO check EventToNote function?
-        if EventIsNote(event) {
-//            println("Note: \(EventToNote(event)!.note)")
-            let newEvent = f(event)
-            println("Transposed Note: \(EventToNote(newEvent)!.note)")
-            var succuess = IteratorSetCurrentEvent(iterator, newEvent)
-        }
-        
-        
+        var succuess = IteratorSetCurrentEvent(iterator, f(event))
         hasCurrentEvent = IteratorToNextEvent(iterator)
     }
+    EXIT_LOG()
+}
+
+func IteratorFor(iterator: MusicEventIterator, f: IteratorEvent -> ()) {
+    ENTRY_LOG()
+    IteratorReset(iterator)
+    var hasCurrentEvent = IteratorHasCurrentEvent(iterator)
+    while hasCurrentEvent {
+        let event = IteratorGetCurrentEvent(iterator)!
+        f(event)
+        hasCurrentEvent = IteratorToNextEvent(iterator)
+    }
+    EXIT_LOG()
 }
 
 //func IteratorGetMetaEvents(iterator: MusicEventIterator) -> Array<MIDIMetaEvent> {
@@ -234,6 +277,7 @@ func IteratorMap(iterator: MusicEventIterator, f: IteratorEvent -> IteratorEvent
 //}
 
 func IteratorGetMetaEvents(iterator: MusicEventIterator) -> Array<MIDIMetaEvent> {
+    ENTRY_LOG()
     var result = Array<MIDIMetaEvent>()
     var events = IteratorGetEvents(iterator)
     for e in events {
@@ -242,6 +286,7 @@ func IteratorGetMetaEvents(iterator: MusicEventIterator) -> Array<MIDIMetaEvent>
             result.append(data.memory)
         }
     }
+    EXIT_LOG()
     return result
 }
 
@@ -249,16 +294,35 @@ func IteratorGetMetaEvents(iterator: MusicEventIterator) -> Array<MIDIMetaEvent>
 
 // TODO
 func MetaEventGetContent(event: MIDIMetaEvent) -> String {
+    ENTRY_LOG()
 //    event.data.value
 //    event.data
 //    NSData(bytes: raw, length: event.dataLength)
 //    var data = NSData(bytes: event.data.value, length: event.dataLength.value)
 //    return NSString(data: data, encoding: NSUTF8StringEncoding)
-    println(event.data)
-    println(event.dataLength)
-    println(event.metaEventType)
-    println("---")
+    log.debug("\(event.data)")
+    log.debug("\(event.dataLength)")
+    log.debug("\(event.metaEventType)")
+    log.debug("---")
+    EXIT_LOG()
     return "Bass"
+}
+
+
+// TODO ?
+func EventPrint(event: IteratorEvent) -> () {
+    ENTRY_LOG()
+    switch (event.type) {
+    case MusicEventType(kMusicEventType_MIDINoteMessage):
+        let e = EventToNote(event)!
+        log.debug("Note Event: \(e.note)")
+        break
+    case MusicEventType(kMusicEventType_Meta):
+        let e = EventToMeta(event)!
+        //log.debug("Meta Event: \(e.)"
+    default: break
+    }
+    EXIT_LOG()
 }
 
 
